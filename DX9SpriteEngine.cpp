@@ -27,6 +27,7 @@ C_DX9_SPRITE_ENGINE::C_DX9_SPRITE_ENGINE()
 	, m_bInitialized(false)
 	, m_bDeviceLost(false)
 	, m_bInFrame(false)
+	, m_bOwnDevice(true)
 	, m_nFrameCountForFPS(0)
 {
 	ZeroMemory(&m_d3dpp, sizeof(m_d3dpp));
@@ -81,7 +82,7 @@ bool C_DX9_SPRITE_ENGINE::Initialize(const _ENGINE_CONFIG& _config)
 {
 	if (m_bInitialized)
 	{
-		OutputDebugStringA("[DX9SpriteEngine] Already initialized\n");
+		DBGPRINT("[DX9SpriteEngine] Already initialized\n");
 		return true;
 	}
 	
@@ -91,7 +92,7 @@ bool C_DX9_SPRITE_ENGINE::Initialize(const _ENGINE_CONFIG& _config)
 	m_pD3D = Direct3DCreate9(D3D_SDK_VERSION);
 	if (m_pD3D == nullptr)
 	{
-		OutputDebugStringA("[DX9SpriteEngine] Failed to create Direct3D9\n");
+		DBGPRINT("[DX9SpriteEngine] Failed to create Direct3D9\n");
 		return false;
 	}
 	
@@ -107,7 +108,7 @@ bool C_DX9_SPRITE_ENGINE::Initialize(const _ENGINE_CONFIG& _config)
 	m_pSpriteRenderer = new C_DX9_SPRITE_RENDERER();
 	if (!m_pSpriteRenderer->Initialize(m_pDevice, m_config.nScreenWidth, m_config.nScreenHeight))
 	{
-		OutputDebugStringA("[DX9SpriteEngine] Failed to initialize sprite renderer\n");
+		DBGPRINT("[DX9SpriteEngine] Failed to initialize sprite renderer\n");
 		delete m_pSpriteRenderer;
 		m_pSpriteRenderer = nullptr;
 		m_pDevice->Release();
@@ -124,8 +125,57 @@ bool C_DX9_SPRITE_ENGINE::Initialize(const _ENGINE_CONFIG& _config)
 	QueryPerformanceCounter(&m_liLastFrameTime);
 	QueryPerformanceCounter(&m_liLastFPSUpdate);
 	
+	m_bOwnDevice = true;  // 엔진이 디바이스를 소유
 	m_bInitialized = true;
-	OutputDebugStringA("[DX9SpriteEngine] Initialized successfully\n");
+	DBGPRINT("[DX9SpriteEngine] Initialized successfully\n");
+	
+	return true;
+}
+
+bool C_DX9_SPRITE_ENGINE::InitializeWithExternalDevice(LPDIRECT3DDEVICE9 _pExternalDevice, UINT _nScreenWidth, UINT _nScreenHeight)
+{
+	if (m_bInitialized)
+	{
+		DBGPRINT("[DX9SpriteEngine] Already initialized\n");
+		return true;
+	}
+	
+	if (_pExternalDevice == nullptr)
+	{
+		DBGPRINT("[DX9SpriteEngine] External device is null\n");
+		return false;
+	}
+	
+	// 외부 디바이스 참조 (Release하지 않음)
+	m_pDevice = _pExternalDevice;
+	m_pD3D = nullptr;  // 외부 디바이스이므로 D3D 인터페이스는 사용하지 않음
+	
+	// 설정 저장
+	m_config.nScreenWidth = _nScreenWidth;
+	m_config.nScreenHeight = _nScreenHeight;
+	m_config.nMaxTextures = 4096;
+	
+	// 스프라이트 렌더러 생성
+	m_pSpriteRenderer = new C_DX9_SPRITE_RENDERER();
+	if (!m_pSpriteRenderer->Initialize(m_pDevice, _nScreenWidth, _nScreenHeight))
+	{
+		DBGPRINT("[DX9SpriteEngine] Failed to initialize sprite renderer with external device\n");
+		delete m_pSpriteRenderer;
+		m_pSpriteRenderer = nullptr;
+		m_pDevice = nullptr;  // 외부 디바이스이므로 Release 안 함
+		return false;
+	}
+	
+	// 텍스처 슬롯 배열 초기화
+	m_vTextures.resize(m_config.nMaxTextures);
+	
+	// 타이머 초기화
+	QueryPerformanceCounter(&m_liLastFrameTime);
+	QueryPerformanceCounter(&m_liLastFPSUpdate);
+	
+	m_bOwnDevice = false;  // 외부 디바이스 - Release하지 않음
+	m_bInitialized = true;
+	DBGPRINT("[DX9SpriteEngine] Initialized with external device successfully\n");
 	
 	return true;
 }
@@ -168,7 +218,7 @@ bool C_DX9_SPRITE_ENGINE::CreateDevice()
 	
 	if (FAILED(hr))
 	{
-		OutputDebugStringA("[DX9SpriteEngine] Failed to create D3D device\n");
+		DBGPRINT("[DX9SpriteEngine] Failed to create D3D device\n");
 		return false;
 	}
 	
@@ -194,22 +244,31 @@ void C_DX9_SPRITE_ENGINE::Shutdown()
 		m_pSpriteRenderer = nullptr;
 	}
 	
-	// 디바이스 해제
-	if (m_pDevice != nullptr)
+	// 디바이스 해제 (소유한 경우에만)
+	if (m_bOwnDevice)
 	{
-		m_pDevice->Release();
-		m_pDevice = nullptr;
+		if (m_pDevice != nullptr)
+		{
+			m_pDevice->Release();
+			m_pDevice = nullptr;
+		}
+		
+		// D3D 해제
+		if (m_pD3D != nullptr)
+		{
+			m_pD3D->Release();
+			m_pD3D = nullptr;
+		}
 	}
-	
-	// D3D 해제
-	if (m_pD3D != nullptr)
+	else
 	{
-		m_pD3D->Release();
+		// 외부 디바이스: 포인터만 초기화 (Release 안 함)
+		m_pDevice = nullptr;
 		m_pD3D = nullptr;
 	}
 	
 	m_bInitialized = false;
-	OutputDebugStringA("[DX9SpriteEngine] Shutdown complete\n");
+	DBGPRINT("[DX9SpriteEngine] Shutdown complete\n");
 }
 
 //============================================================================
@@ -299,7 +358,7 @@ int C_DX9_SPRITE_ENGINE::LoadTexture(const std::wstring& _strFilePath, D3DCOLOR 
 	
 	if (nSlot < 0)
 	{
-		OutputDebugStringA("[DX9SpriteEngine] No available texture slot\n");
+		DBGPRINT("[DX9SpriteEngine] No available texture slot\n");
 		return -1;
 	}
 	
@@ -323,7 +382,7 @@ bool C_DX9_SPRITE_ENGINE::LoadTextureToSlot(int _nSlot, const std::wstring& _str
 	D3DXIMAGE_INFO imageInfo;
 	if (FAILED(D3DXGetImageInfoFromFileW(_strFilePath.c_str(), &imageInfo)))
 	{
-		OutputDebugStringA("[DX9SpriteEngine] Failed to get image info\n");
+		DBGPRINT("[DX9SpriteEngine] Failed to get image info\n");
 		return false;
 	}
 	
@@ -348,7 +407,7 @@ bool C_DX9_SPRITE_ENGINE::LoadTextureToSlot(int _nSlot, const std::wstring& _str
 	
 	if (FAILED(hr) || pTexture == nullptr)
 	{
-		OutputDebugStringA("[DX9SpriteEngine] Failed to load texture\n");
+		DBGPRINT("[DX9SpriteEngine] Failed to load texture\n");
 		return false;
 	}
 	
@@ -459,8 +518,8 @@ bool C_DX9_SPRITE_ENGINE::BeginFrame(D3DCOLOR _dwClearColor)
 	if (!m_bInitialized)
 		return false;
 	
-	// 디바이스 손실 처리
-	if (m_bDeviceLost)
+	// 디바이스 손실 처리 (소유한 디바이스만)
+	if (m_bOwnDevice && m_bDeviceLost)
 	{
 		if (!HandleDeviceLost())
 			return false;
@@ -486,8 +545,11 @@ bool C_DX9_SPRITE_ENGINE::BeginFrame(D3DCOLOR _dwClearColor)
 		m_liLastFPSUpdate = liCurrentTime;
 	}
 	
-	// 화면 클리어
-	m_pDevice->Clear(0, nullptr, D3DCLEAR_TARGET, _dwClearColor, 1.0f, 0);
+	// 화면 클리어 (소유한 디바이스만 - 외부 디바이스는 외부에서 Clear 담당)
+	if (m_bOwnDevice)
+	{
+		m_pDevice->Clear(0, nullptr, D3DCLEAR_TARGET, _dwClearColor, 1.0f, 0);
+	}
 	
 	// 스프라이트 배칭 시작
 	if (m_pSpriteRenderer != nullptr)
@@ -521,6 +583,12 @@ void C_DX9_SPRITE_ENGINE::EndFrame()
 
 bool C_DX9_SPRITE_ENGINE::Present()
 {
+	// 외부 디바이스 시 Present는 외부에서 담당
+	if (!m_bOwnDevice)
+	{
+		return true;
+	}
+	
 	HRESULT hr = m_pDevice->Present(nullptr, nullptr, nullptr, nullptr);
 	
 	if (hr == D3DERR_DEVICELOST)

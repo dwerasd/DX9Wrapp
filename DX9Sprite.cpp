@@ -57,7 +57,7 @@ namespace dx9
 		);
 		if (FAILED(hr))
 		{
-			OutputDebugStringA("[DX9Sprite] Failed to create vertex buffer\n");
+			DBGPRINT("[DX9Sprite] Failed to create vertex buffer\n");
 			return false;
 		}
 
@@ -72,7 +72,7 @@ namespace dx9
 		);
 		if (FAILED(hr))
 		{
-			OutputDebugStringA("[DX9Sprite] Failed to create index buffer\n");
+			DBGPRINT("[DX9Sprite] Failed to create index buffer\n");
 			Release();
 			return false;
 		}

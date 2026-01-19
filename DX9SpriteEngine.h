@@ -148,6 +148,7 @@ private:
 	bool m_bInitialized;                         ///< 초기화 완료 여부
 	bool m_bDeviceLost;                          ///< 디바이스 손실 상태
 	bool m_bInFrame;                             ///< BeginFrame ~ EndFrame 사이인지
+	bool m_bOwnDevice;                           ///< 디바이스 소유 여부 (false면 외부 디바이스)
 	
 	//------------------------------------------------------------------------
 	// 타이밍
@@ -208,6 +209,20 @@ public:
 	 * @return 성공 시 true
 	 */
 	bool Initialize(const _ENGINE_CONFIG& _config);
+	
+	/**
+	 * @brief 외부 디바이스로 엔진 초기화 (Wonderking 등 기존 D3D 디바이스 사용)
+	 * @param _pExternalDevice 외부에서 생성된 D3D9 디바이스 (엔진이 Release하지 않음)
+	 * @param _nScreenWidth 화면 너비
+	 * @param _nScreenHeight 화면 높이
+	 * @return 성공 시 true
+	 * 
+	 * @details 이 메서드로 초기화 시 엔진은 스프라이트 렌더러만 사용하며,
+	 *          디바이스 생성/해제/Present는 외부에서 담당합니다.
+	 *          BeginFrame(), EndFrame()에서 BeginScene/EndScene을 호출하지 않습니다.
+	 *          외부에서 BeginScene() 후 DrawSprite 계열 호출, 이후 외부에서 EndScene(), Present() 호출
+	 */
+	bool InitializeWithExternalDevice(LPDIRECT3DDEVICE9 _pExternalDevice, UINT _nScreenWidth, UINT _nScreenHeight);
 	
 	/**
 	 * @brief 엔진 종료 및 리소스 해제

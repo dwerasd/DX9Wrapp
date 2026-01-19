@@ -38,13 +38,17 @@
 #include <directxsdk/d3dx9shader.h>
 #endif
 
-enum _DEVICE_STATUS_
+// DX9Wrapp 전용 디바이스 상태 enum (이름 충돌 방지 - dx9 namespace 내부에서 사용)
+namespace dx9
 {
-	_DX9_DEVICE_LOST = 0
-	, _DX9_DEVICE_OK
-	, _DX9_DEVICE_RESTORED
-	, _DX9_DEVICE_DESTROY
-};
+	enum _DEVICE_STATUS_
+	{
+		_DX9_DEVICE_LOST = 0
+		, _DX9_DEVICE_OK
+		, _DX9_DEVICE_RESTORED
+		, _DX9_DEVICE_DESTROY
+	};
+}
 
 //#define USE_D3D
 #define MAX_UNIT_COUNT	(1 << 7)
