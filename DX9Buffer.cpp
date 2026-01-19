@@ -5,19 +5,9 @@
 
 namespace dx9
 {
-	_DX9_VERTEX_BUFFER::_DX9_VERTEX_BUFFER()
-		: pVertexBuffer(nullptr)
-		, nCreateSize(0)
-		, nStructSize(0)
-		, dwUsage(0)
-		, dwFVF(0)
-		, d3dPool(D3DPOOL_MANAGED)	// 매니저는 자동관리라서 디폴트로 한다
-	{
-	}
 	_DX9_VERTEX_BUFFER::_DX9_VERTEX_BUFFER(UINT _nStructSize, DWORD _nCreateCount, DWORD _dwFVF, DWORD _dwFlags)
-		: pVertexBuffer(nullptr)
+		: nCreateSize(_nStructSize* _nCreateCount)
 		, nStructSize(_nStructSize)
-		, nCreateSize(_nStructSize * _nCreateCount)
 		, dwFVF(_dwFVF)
 		, dwUsage(_dwFlags)
 	{
@@ -25,7 +15,7 @@ namespace dx9
 	}
 	bool _DX9_VERTEX_BUFFER::Create(LPDIRECT3DDEVICE9 _pDevice)
 	{
-		HRESULT hResult = _pDevice->CreateVertexBuffer(
+		const HRESULT hResult = _pDevice->CreateVertexBuffer(
 			nCreateSize
 			, dwUsage
 			, dwFVF
@@ -33,7 +23,7 @@ namespace dx9
 			, &pVertexBuffer
 			, nullptr
 		);
-		return (hResult != D3D_OK) ? false : true;
+		return hResult == D3D_OK;
 	}
 
 	void _DX9_VERTEX_BUFFER::Release()
@@ -71,19 +61,10 @@ namespace dx9
 		pVertexBuffer->Unlock();
 	}
 
-	_DX9_INDEX_BUFFER::_DX9_INDEX_BUFFER()
-		: pIndexBuffer(nullptr)
-		, nCreateCount(0)
-		, nIndexSize(0)
-		, dwUsage(0)
-		, d3dPool(D3DPOOL_MANAGED)	// 매니저는 자동관리라서 디폴트로 한다
-	{
-	}
 	_DX9_INDEX_BUFFER::_DX9_INDEX_BUFFER(UINT _nIndexSize, DWORD _nCreateCount, DWORD _dwFlags)
-		: pIndexBuffer(nullptr)
-		, nIndexSize(_nIndexSize)
-		, nCreateCount(_nCreateCount)
-		, dwUsage(_dwFlags)
+		: nCreateCount(_nCreateCount)
+		  , nIndexSize(_nIndexSize)
+		  , dwUsage(_dwFlags)
 	{
 		d3dPool = DIS_SET(dwUsage, D3DUSAGE_DYNAMIC) ? D3DPOOL_DEFAULT : D3DPOOL_MANAGED;
 	}
@@ -141,10 +122,9 @@ namespace dx9
 		, y(0.0f)
 		, z(0.0f)
 		, rhw(1.0f)
-		, dwColor(0xFFFFFFFF)
 	{
 	}
-	_VERTEX_NO_TEX_RHW::_VERTEX_NO_TEX_RHW(float _x, float _y, unsigned long _color)
+	_VERTEX_NO_TEX_RHW::_VERTEX_NO_TEX_RHW(float _x, float _y, DWORD _color)
 		: x(_x)
 		, y(_y)
 		, z(0.0f)
@@ -152,7 +132,7 @@ namespace dx9
 		, dwColor(_color)
 	{
 	}
-	_VERTEX_NO_TEX_RHW::_VERTEX_NO_TEX_RHW(float _x, float _y, float _z, unsigned long _color)
+	_VERTEX_NO_TEX_RHW::_VERTEX_NO_TEX_RHW(float _x, float _y, float _z, DWORD _color)
 		: x(_x)
 		, y(_y)
 		, z(_z)
@@ -160,7 +140,7 @@ namespace dx9
 		, dwColor(_color)
 	{
 	}
-	_VERTEX_NO_TEX_RHW::_VERTEX_NO_TEX_RHW(float _x, float _y, float _z, float _rhw, unsigned long _color)
+	_VERTEX_NO_TEX_RHW::_VERTEX_NO_TEX_RHW(float _x, float _y, float _z, float _rhw, DWORD _color)
 		: x(_x)
 		, y(_y)
 		, z(_z)
@@ -170,9 +150,8 @@ namespace dx9
 
 	}
 	_VERTEX_TEX_RHW::_VERTEX_TEX_RHW()
-		: _VERTEX_NO_TEX_RHW()
-		, u(0.0f)
-		, v(0.0f)
+		: u(0.0f)
+		  , v(0.0f)
 	{
 	}
 	_VERTEX_TEX_RHW::_VERTEX_TEX_RHW(float _x, float _y, float _u, float _v)
@@ -221,14 +200,14 @@ namespace dx9
 		, dwColor(0xFFFFFFFF)
 	{
 	}
-	_VERTEX_NO_TEX::_VERTEX_NO_TEX(float _x, float _y, unsigned long _color)
+	_VERTEX_NO_TEX::_VERTEX_NO_TEX(float _x, float _y, DWORD _color)
 		: x(_x)
 		, y(_y)
 		, z(0.0f)
 		, dwColor(_color)
 	{
 	}
-	_VERTEX_NO_TEX::_VERTEX_NO_TEX(float _x, float _y, float _z, unsigned long _color)
+	_VERTEX_NO_TEX::_VERTEX_NO_TEX(float _x, float _y, float _z, DWORD _color)
 		: x(_x)
 		, y(_y)
 		, z(_z)
@@ -237,9 +216,8 @@ namespace dx9
 	}
 
 	_VERTEX_TEX::_VERTEX_TEX()
-		: _VERTEX_NO_TEX()
-		, u(0.0f)
-		, v(0.0f)
+		: u(0.0f)
+		  , v(0.0f)
 	{
 	}
 	_VERTEX_TEX::_VERTEX_TEX(float _x, float _y, float _u, float _v)
@@ -276,31 +254,30 @@ namespace dx9
 		, _1(1)
 	{
 	}
-	_INDEX_LINE::_INDEX_LINE(unsigned short _n0, unsigned short _n1)
+	_INDEX_LINE::_INDEX_LINE(WORD _n0, WORD _n1)
 		: _0(_n0)
 		, _1(_n1)
 	{
 	}
 	/*
-	void _INDEX_LINE::Set(unsigned short _n0, unsigned short _n1)
+	void _INDEX_LINE::Set(WORD _n0, WORD _n1)
 	{
 		_0 = _n0;
 		_1 = _n1;
 	}
 	*/
 	_INDEX_TRIANGLE::_INDEX_TRIANGLE()
-		: _INDEX_LINE()
-		, _2(2)
+		: _2(2)
 	{
 	}
-	_INDEX_TRIANGLE::_INDEX_TRIANGLE(unsigned short _n0, unsigned short _n1, unsigned short _n2)
+	_INDEX_TRIANGLE::_INDEX_TRIANGLE(WORD _n0, WORD _n1, WORD _n2)
 		: _2(_n2)
 	{
 		_0 = _n0;
 		_1 = _n1;
 	}
 	/*
-	void _INDEX_TRIANGLE::Set(unsigned short _n0, unsigned short _n1, unsigned short _n2)
+	void _INDEX_TRIANGLE::Set(WORD _n0, WORD _n1, WORD _n2)
 	{
 		_0 = _n0;
 		_1 = _n1;

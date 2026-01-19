@@ -16,12 +16,12 @@ namespace dx9
 		Set(other);
 		return *this;
 	}
-	_DVIEWPORT9 _DVIEWPORT9::operator = (DVIEWPORT other)
+	_DVIEWPORT9 _DVIEWPORT9::operator = (_DVIEWPORT other)
 	{
 		Set(other);
 		return (*this);
 	}
-	_DVIEWPORT9 _DVIEWPORT9::operator = (DVIEWPORT *other)
+	_DVIEWPORT9 _DVIEWPORT9::operator = (_DVIEWPORT *other)
 	{
 		Set(other);
 		return(*this);

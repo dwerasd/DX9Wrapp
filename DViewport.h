@@ -9,7 +9,7 @@
 
 namespace dx9
 {
-	typedef struct _DVIEWPORT
+	struct _DVIEWPORT
 	{
 		DWORD       X;
 		DWORD       Y;            /* Viewport Top left */
@@ -42,7 +42,7 @@ namespace dx9
 			MinZ = p->MinZ;
 			MaxZ = p->MaxZ;
 		}
-		_DVIEWPORT(_DVIEWPORT &p)
+		_DVIEWPORT(const _DVIEWPORT &p)
 		{
 			X = p.X;
 			Y = p.Y;
@@ -78,7 +78,7 @@ namespace dx9
 			MinZ = p->MinZ;
 			MaxZ = p->MaxZ;
 		}
-		void Set(_DVIEWPORT &p)
+		void Set(const _DVIEWPORT &p)
 		{
 			X = p.X;
 			Y = p.Y;
@@ -87,5 +87,5 @@ namespace dx9
 			MinZ = p.MinZ;
 			MaxZ = p.MaxZ;
 		}
-	} DVIEWPORT, *LPDVIEWPORT;
+	};
 }

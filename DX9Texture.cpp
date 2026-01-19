@@ -6,28 +6,17 @@
 namespace dx9
 {
 	_DX9_TEXTURE::_DX9_TEXTURE(LPDIRECT3DDEVICE9 _pDevice)
-		: pTexture(nullptr)
-		, pDevice(_pDevice)
-		, d3dFormat(D3DFMT_UNKNOWN)
-		, dwUsage(0)
-		, d3dPool(D3DPOOL_MANAGED)		// 매니저는 자동관리라서 디폴트로 한다
-		, nMipLevels(1)
-		, nWidth(0)
-		, nHeight(0)
-		, pFile(nullptr)
+		: pDevice(_pDevice)
 	{
 		
 	}
-	//THIS_ UINT Width, UINT Height, UINT Levels, DWORD Usage, D3DFORMAT Format, D3DPOOL Pool, IDirect3DTexture9** ppTexture, HANDLE* pSharedHandle
-	_DX9_TEXTURE::_DX9_TEXTURE(LPDIRECT3DDEVICE9 _pDevice, UINT _nWidth, UINT _nHeight, D3DFORMAT _d3dFormat, DWORD _dwUsage)
-		: pTexture(nullptr)
-		, pDevice(_pDevice)
-		, d3dFormat(_d3dFormat)
-		, dwUsage(_dwUsage)
-		, nMipLevels(1)
-		, nWidth(_nWidth)
-		, nHeight(_nHeight)
-		, pFile(nullptr)
+	//THIS_ UINT Width, UINT Height, UINT Levels, DWORD Usage, _D3DFORMAT Format, D3DPOOL Pool, IDirect3DTexture9** ppTexture, HANDLE* pSharedHandle
+	_DX9_TEXTURE::_DX9_TEXTURE(LPDIRECT3DDEVICE9 _pDevice, UINT _nWidth, UINT _nHeight, const _D3DFORMAT& _d3dFormat, DWORD _dwUsage)
+		: pDevice(_pDevice)
+		  , d3dFormat(_d3dFormat)
+		  , dwUsage(_dwUsage)
+		  , nWidth(_nWidth)
+		  , nHeight(_nHeight)
 	{
 		if (DIS_SET(dwUsage, D3DUSAGE_DYNAMIC)
 			|| DIS_SET(dwUsage, D3DUSAGE_RENDERTARGET)
@@ -44,7 +33,7 @@ namespace dx9
 	}
 	bool _DX9_TEXTURE::Create()
 	{
-		//UINT Width, UINT Height, UINT Levels, DWORD Usage, D3DFORMAT Format, D3DPOOL Pool, IDirect3DTexture9** ppTexture, HANDLE* pSharedHandle
+		//UINT Width, UINT Height, UINT Levels, DWORD Usage, _D3DFORMAT Format, D3DPOOL Pool, IDirect3DTexture9** ppTexture, HANDLE* pSharedHandle
 		if (0 < nWidth)
 		{
 			DBGPRINT("_DX9_TEXTURE::Create() %i / %i / %i / %i", nWidth, nHeight, nMipLevels, d3dFormat);

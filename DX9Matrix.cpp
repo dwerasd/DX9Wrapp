@@ -386,21 +386,21 @@ namespace dx9
 
 	// 행렬에서 스케일 벡터 추출
 	// @return: 스케일 벡터 (x, y, z 각 축의 스케일)
-	DVECTOR3 _DMATRIX9::GetScale() const noexcept
+	_DVECTOR3 _DMATRIX9::GetScale() const noexcept
 	{
 		// 각 축 벡터의 길이가 스케일
 		float fScaleX_ = sqrtf(_11 * _11 + _12 * _12 + _13 * _13);
 		float fScaleY_ = sqrtf(_21 * _21 + _22 * _22 + _23 * _23);
 		float fScaleZ_ = sqrtf(_31 * _31 + _32 * _32 + _33 * _33);
-		return DVECTOR3(fScaleX_, fScaleY_, fScaleZ_);
+		return _DVECTOR3(fScaleX_, fScaleY_, fScaleZ_);
 	}
 
 	// 행렬에서 회전 각도 추출 (라디안)
 	// 참고: 스케일이 적용된 행렬에서는 스케일을 먼저 제거해야 정확한 값을 얻을 수 있음
 	// @return: 회전 벡터 (x, y, z 각 축의 회전)
-	DVECTOR3 _DMATRIX9::GetRotationRadians() const noexcept
+	_DVECTOR3 _DMATRIX9::GetRotationRadians() const noexcept
 	{
-		DVECTOR3 v3Scale_ = GetScale();
+		_DVECTOR3 v3Scale_ = GetScale();
 
 		// 스케일 제거
 		float f11_ = _11 / v3Scale_.x;
@@ -426,7 +426,7 @@ namespace dx9
 			fRotZ_ = 0.0f;
 		}
 
-		return DVECTOR3(fRotX_, fRotY_, fRotZ_);
+		return _DVECTOR3(fRotX_, fRotY_, fRotZ_);
 	}
 
 }

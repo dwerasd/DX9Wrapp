@@ -13,7 +13,7 @@
 
 namespace dx9
 {
-	typedef struct _DMATRIX9
+	struct _DMATRIX9
 		: public _D3DXMATRIXA16
 	{
 		_DMATRIX9();
@@ -41,8 +41,8 @@ namespace dx9
 		_DMATRIX9 operator+(const _DMATRIX9& other);	// 090716, OZ
 
 		// transform, mvector * mmatrix 로 대체가능.
-		//friend DVECTOR3 operator * (const DVECTOR3& v, const _DMATRIX9& tm);
-		//friend DVECTOR4 operator * (const DVECTOR4& v, const _DMATRIX9& tm);
+		//friend _DVECTOR3 operator * (const _DVECTOR3& v, const _DMATRIX9& tm);
+		//friend _DVECTOR4 operator * (const _DVECTOR4& v, const _DMATRIX9& tm);
 
 		void Set(float f11, float f12, float f13, float f14,
 			float f21, float f22, float f23, float f24,
@@ -56,12 +56,12 @@ namespace dx9
 		void Set(_DMATRIX9 v);
 		void Clear();
 
-		void TransformVect(DVECTOR3& vect) const;
-		void TransformVectHomogeneous(DVECTOR3& vect) const;
-		void TransformVect(const DVECTOR3& in, DVECTOR3& out) const;
-		void TransformVect(const DVECTOR3& in, DVECTOR4& out) const;
-		void TransformNormal(DVECTOR3& vect) const;
-		void TransformNormal(const DVECTOR3& in, DVECTOR3& out) const;
+		void TransformVect(_DVECTOR3& vect) const;
+		void TransformVectHomogeneous(_DVECTOR3& vect) const;
+		void TransformVect(const _DVECTOR3& in, _DVECTOR3& out) const;
+		void TransformVect(const _DVECTOR3& in, _DVECTOR4& out) const;
+		void TransformNormal(_DVECTOR3& vect) const;
+		void TransformNormal(const _DVECTOR3& in, _DVECTOR3& out) const;
 		//void TransformPlane(const MPlane& in, MPlane& out) const;
 
 		void MultiplyTo(const _DMATRIX9& other, _DMATRIX9& out) const; // out = this * other;
@@ -70,39 +70,39 @@ namespace dx9
 		void MakeIdentity();
 
 		// 콤포넌트만 세팅
-		void SetTranslation(const DVECTOR3& trans);
-		void SetInverseTranslation(const DVECTOR3& trans);
-		DVECTOR3 GetTranslation() const;
-		void SetRotationDegrees(const DVECTOR3& rotation);
-		void SetRotationRadians(const DVECTOR3& rotation);
-		void SetScale(const DVECTOR3& scale);
+		void SetTranslation(const _DVECTOR3& trans);
+		void SetInverseTranslation(const _DVECTOR3& trans);
+		_DVECTOR3 GetTranslation() const;
+		void SetRotationDegrees(const _DVECTOR3& rotation);
+		void SetRotationRadians(const _DVECTOR3& rotation);
+		void SetScale(const _DVECTOR3& scale);
 		void SetScale(float s);
 		void SetRotationX(float fRadian);
 		void SetRotationY(float fRadian);
 		void SetRotationZ(float fRadian);
 
 		// matrix 전체를 세팅해주는 헬퍼펑션들
-		void SetRotationMatrix(float x, float y, float z) { SetRotationMatrix(DVECTOR3(x, y, z)); }
-		void SetRotationMatrix(const DVECTOR3& rotation);// 단위 : 라디안
-		void SetTranslationMatrix(float x, float y, float z) { SetTranslationMatrix(DVECTOR3(x, y, z)); }
-		void SetTranslationMatrix(const DVECTOR3& trans);
-		void SetScaleMatrix(float x, float y, float z) { SetScaleMatrix(DVECTOR3(x, y, z)); }
-		void SetScaleMatrix(const DVECTOR3& scale);
+		void SetRotationMatrix(float x, float y, float z) { SetRotationMatrix(_DVECTOR3(x, y, z)); }
+		void SetRotationMatrix(const _DVECTOR3& rotation);// 단위 : 라디안
+		void SetTranslationMatrix(float x, float y, float z) { SetTranslationMatrix(_DVECTOR3(x, y, z)); }
+		void SetTranslationMatrix(const _DVECTOR3& trans);
+		void SetScaleMatrix(float x, float y, float z) { SetScaleMatrix(_DVECTOR3(x, y, z)); }
+		void SetScaleMatrix(const _DVECTOR3& scale);
 		void SetProjectionMatrixRH(float w, float h, float zNear, float zFar);
 		void SetProjectionMatrixLH(float w, float h, float zNear, float zFar);
 		void SetProjectionMatrixFovRH(float fFovY, float fAspectRatio, float zNear, float zFar);
 		void SetProjectionMatrixFovLH(float fFovY, float fAspectRatio, float zNear, float zFar);
-		void SetLookAtMatrixLH(DVECTOR3& position, DVECTOR3& target, DVECTOR3& upVector);
-		void SetLookAtMatrixRH(DVECTOR3& position, DVECTOR3& target, DVECTOR3& upVector);
+		void SetLookAtMatrixLH(_DVECTOR3& position, _DVECTOR3& target, _DVECTOR3& upVector);
+		void SetLookAtMatrixRH(_DVECTOR3& position, _DVECTOR3& target, _DVECTOR3& upVector);
 		void SetOrthoLH(float w, float h, float zn, float zf);
 		void SetOrthoRH(float w, float h, float zn, float zf);
 		void SetOrthoOffCenterRH(float l, float r, float b, float t, float zn, float zf);
 		void SetOrthoOffCenterLH(float l, float r, float b, float t, float zn, float zf);
 
-		void SetRotationMatrixAxis(const DVECTOR3& axis, float radian);
+		void SetRotationMatrixAxis(const _DVECTOR3& axis, float radian);
 		void SetRotationYawPitchRoll(float yaw, float pitch, float roll);	// 테스트 되지 않았음.
-		void SetLocalMatrix(DVECTOR3& position, DVECTOR3& dir, DVECTOR3& up);
-		void SetLocalMatrix(DVECTOR3& position, DVECTOR3& dir, DVECTOR3& up, DVECTOR3& right);
+		void SetLocalMatrix(_DVECTOR3& position, _DVECTOR3& dir, _DVECTOR3& up);
+		void SetLocalMatrix(_DVECTOR3& position, _DVECTOR3& dir, _DVECTOR3& up, _DVECTOR3& right);
 
 		void SetScreenSpaceMatrix(DWORD dwScreenWidth, DWORD dwScreenHeight);
 
@@ -120,14 +120,14 @@ namespace dx9
 
 		// 행렬에서 스케일 벡터 추출
 		// @return: 스케일 벡터 (x, y, z 각 축의 스케일)
-		DVECTOR3 GetScale() const noexcept;
+		_DVECTOR3 GetScale() const noexcept;
 
 		// 행렬에서 회전 각도 추출 (라디안)
 		// @return: 회전 벡터 (x, y, z 각 축의 회전)
-		DVECTOR3 GetRotationRadians() const noexcept;
+		_DVECTOR3 GetRotationRadians() const noexcept;
 
 		static const _DMATRIX9 _IDENTITY;
-	} DMATRIX9, *LPDMATRIX9;
+	};
 
 	inline void _DMATRIX9::MakeZero()
 	{
@@ -140,14 +140,14 @@ namespace dx9
 		m[0][0] = m[1][1] = m[2][2] = m[3][3] = 1.0f;
 	}
 
-	inline void _DMATRIX9::SetTranslation(const DVECTOR3& trans)
+	inline void _DMATRIX9::SetTranslation(const _DVECTOR3& trans)
 	{
 		_41 = trans.x;
 		_42 = trans.y;
 		_43 = trans.z;
 	}
 
-	inline void _DMATRIX9::SetInverseTranslation(const DVECTOR3& trans)
+	inline void _DMATRIX9::SetInverseTranslation(const _DVECTOR3& trans)
 	{
 		_41 = -trans.x;
 		_42 = -trans.y;
@@ -155,20 +155,20 @@ namespace dx9
 
 	}
 
-	inline DVECTOR3 _DMATRIX9::GetTranslation() const
+	inline _DVECTOR3 _DMATRIX9::GetTranslation() const
 	{
-		return DVECTOR3(_41, _42, _43);
+		return _DVECTOR3(_41, _42, _43);
 	}
 
-	inline void _DMATRIX9::SetRotationDegrees(const DVECTOR3& rotation)
+	inline void _DMATRIX9::SetRotationDegrees(const _DVECTOR3& rotation)
 	{
-		DVECTOR3 v;
+		_DVECTOR3 v;
 		v.Set(rotation * (float)3.1415926535897932384626433832795 / 180.0);
 
 		SetRotationRadians(v);
 	}
 
-	inline void _DMATRIX9::SetRotationRadians(const DVECTOR3& rotation)
+	inline void _DMATRIX9::SetRotationRadians(const _DVECTOR3& rotation)
 	{
 		const double cr = cos(rotation.x);
 		const double sr = sin(rotation.x);
@@ -193,7 +193,7 @@ namespace dx9
 		m[2][2] = (float)(cr * cp);
 	}
 
-	inline void _DMATRIX9::SetScale(const DVECTOR3& scale)
+	inline void _DMATRIX9::SetScale(const _DVECTOR3& scale)
 	{
 		_11 = scale.x;
 		_22 = scale.y;
@@ -205,25 +205,25 @@ namespace dx9
 		_11 = _22 = _33 = s;
 	}
 
-	inline void _DMATRIX9::SetRotationMatrix(const DVECTOR3& rotation)
+	inline void _DMATRIX9::SetRotationMatrix(const _DVECTOR3& rotation)
 	{
 		MakeIdentity();
 		SetRotationRadians(rotation);
 	}
 
-	inline void _DMATRIX9::SetTranslationMatrix(const DVECTOR3& trans)
+	inline void _DMATRIX9::SetTranslationMatrix(const _DVECTOR3& trans)
 	{
 		MakeIdentity();
 		SetTranslation(trans);
 	}
 
-	inline void _DMATRIX9::SetScaleMatrix(const DVECTOR3& scale)
+	inline void _DMATRIX9::SetScaleMatrix(const _DVECTOR3& scale)
 	{
 		MakeIdentity();
 		SetScale(scale);
 	}
 
-	inline void _DMATRIX9::TransformVect(DVECTOR3& vect) const
+	inline void _DMATRIX9::TransformVect(_DVECTOR3& vect) const
 	{
 		float vec[3];
 
@@ -236,7 +236,7 @@ namespace dx9
 		vect.z = vec[2];
 	}
 
-	inline void _DMATRIX9::TransformVectHomogeneous(DVECTOR3& vect) const
+	inline void _DMATRIX9::TransformVectHomogeneous(_DVECTOR3& vect) const
 	{
 		float vec[3];
 
@@ -251,7 +251,7 @@ namespace dx9
 
 	}
 
-	inline void _DMATRIX9::TransformVect(const DVECTOR3& in, DVECTOR3& out) const
+	inline void _DMATRIX9::TransformVect(const _DVECTOR3& in, _DVECTOR3& out) const
 	{
 		//assert(&in!=&out); // 이경우 에러납니다.
 		out.x = in.x * _11 + in.y * _21 + in.z * _31 + _41;
@@ -259,7 +259,7 @@ namespace dx9
 		out.z = in.x * _13 + in.y * _23 + in.z * _33 + _43;
 	}
 
-	inline void _DMATRIX9::TransformVect(const DVECTOR3& in, DVECTOR4& out) const
+	inline void _DMATRIX9::TransformVect(const _DVECTOR3& in, _DVECTOR4& out) const
 	{
 		out.x = in.x * _11 + in.y * _21 + in.z * _31 + _41;
 		out.y = in.x * _12 + in.y * _22 + in.z * _32 + _42;
@@ -267,7 +267,7 @@ namespace dx9
 		out.w = in.x * _14 + in.y * _24 + in.z * _34 + _44;
 	}
 
-	inline void _DMATRIX9::TransformNormal(DVECTOR3& vect) const
+	inline void _DMATRIX9::TransformNormal(_DVECTOR3& vect) const
 	{
 		float vec[3];
 
@@ -281,7 +281,7 @@ namespace dx9
 
 	}
 
-	inline void _DMATRIX9::TransformNormal(const DVECTOR3& in, DVECTOR3& out) const
+	inline void _DMATRIX9::TransformNormal(const _DVECTOR3& in, _DVECTOR3& out) const
 	{
 		out.x = in.x * _11 + in.y * _21 + in.z * _31;
 		out.y = in.x * _12 + in.y * _22 + in.z * _32;
@@ -289,16 +289,16 @@ namespace dx9
 	}
 
 
-	inline DVECTOR3 operator * (const DVECTOR3& v, const _DMATRIX9& tm)
+	inline _DVECTOR3 operator * (const _DVECTOR3& v, const _DMATRIX9& tm)
 	{
-		DVECTOR3 ret;
+		_DVECTOR3 ret;
 		tm.TransformVect(v, ret);
 		return ret;
 	}
 
-	inline DVECTOR4 operator * (const DVECTOR4& v, const _DMATRIX9& tm)
+	inline _DVECTOR4 operator * (const _DVECTOR4& v, const _DMATRIX9& tm)
 	{
-		DVECTOR4 vec4;
+		_DVECTOR4 vec4;
 
 		vec4.x = v.x * tm._11 + v.y * tm._21 + v.z * tm._31 + v.w * tm._41;
 		vec4.y = v.x * tm._12 + v.y * tm._22 + v.z * tm._32 + v.w * tm._42;
@@ -405,16 +405,16 @@ namespace dx9
 		_44 = 0;
 	}
 
-	inline void _DMATRIX9::SetLookAtMatrixRH(DVECTOR3& eye, DVECTOR3& at, DVECTOR3& up)
+	inline void _DMATRIX9::SetLookAtMatrixRH(_DVECTOR3& eye, _DVECTOR3& at, _DVECTOR3& up)
 	{
-		DVECTOR3 zaxis = eye - at;
+		_DVECTOR3 zaxis = eye - at;
 		zaxis.Normalize();
 
-		DVECTOR3 xaxis = up.CrossProduct(&zaxis);
+		_DVECTOR3 xaxis = up.CrossProduct(&zaxis);
 
 		xaxis.Normalize();
 
-		DVECTOR3 yaxis = zaxis.CrossProduct(&xaxis);
+		_DVECTOR3 yaxis = zaxis.CrossProduct(&xaxis);
 		yaxis.Normalize();
 
 		_11 = xaxis.x;
@@ -438,15 +438,15 @@ namespace dx9
 		_44 = 1.0f;
 	}
 
-	inline void _DMATRIX9::SetLookAtMatrixLH(DVECTOR3& eye, DVECTOR3& at, DVECTOR3& up)
+	inline void _DMATRIX9::SetLookAtMatrixLH(_DVECTOR3& eye, _DVECTOR3& at, _DVECTOR3& up)
 	{
-		DVECTOR3 zaxis = at - eye;
+		_DVECTOR3 zaxis = at - eye;
 		zaxis.Normalize();
 
-		DVECTOR3 xaxis = up.CrossProduct(&zaxis);
+		_DVECTOR3 xaxis = up.CrossProduct(&zaxis);
 		xaxis.Normalize();
 
-		DVECTOR3 yaxis = zaxis.CrossProduct(&xaxis);
+		_DVECTOR3 yaxis = zaxis.CrossProduct(&xaxis);
 		yaxis.Normalize();
 
 		_11 = xaxis.x;
@@ -522,15 +522,15 @@ namespace dx9
 		GetInverse(&matrix);
 		matrix = matrix.GetTranspose();
 
-		out = MPlane((float*)(DVECTOR4((const float*)in) * matrix));
+		out = MPlane((float*)(_DVECTOR4((const float*)in) * matrix));
 
 
 
-		//DVECTOR3 aPoint = - in.Normal() * in.d;
+		//_DVECTOR3 aPoint = - in.Normal() * in.d;
 		//TransformVect(aPoint);
 
-		//DVECTOR3 normal = in.Normal();
-		//DVECTOR3 origin(0,0,0);
+		//_DVECTOR3 normal = in.Normal();
+		//_DVECTOR3 origin(0,0,0);
 		//TransformVect(normal);
 		//TransformVect(origin);
 		//normal -= origin;
@@ -538,7 +538,7 @@ namespace dx9
 
 	}
 	*/
-	inline void _DMATRIX9::SetRotationMatrixAxis(const DVECTOR3& axis, float radian)
+	inline void _DMATRIX9::SetRotationMatrixAxis(const _DVECTOR3& axis, float radian)
 	{
 		const float c = cosf(radian);
 		const float s = sinf(radian);
@@ -609,14 +609,14 @@ namespace dx9
 		// 폐기된 코드
 		_DMATRIX9 z, y, x;
 
-		z.SetRotationRadians(DVECTOR3(0,0,yaw));
-		x.SetRotationRadians(DVECTOR3(pitch, 0, 0));
-		y.SetRotationRadians(DVECTOR3(0,-roll, 0));
+		z.SetRotationRadians(_DVECTOR3(0,0,yaw));
+		x.SetRotationRadians(_DVECTOR3(pitch, 0, 0));
+		y.SetRotationRadians(_DVECTOR3(0,-roll, 0));
 		*this = z * x * y;
 		*/
 	}
 
-	inline void _DMATRIX9::SetLocalMatrix(DVECTOR3& position, DVECTOR3& dir, DVECTOR3& up, DVECTOR3& right)
+	inline void _DMATRIX9::SetLocalMatrix(_DVECTOR3& position, _DVECTOR3& dir, _DVECTOR3& up, _DVECTOR3& right)
 	{
 		_11 = right.x;
 		_12 = right.y;
@@ -642,8 +642,8 @@ namespace dx9
 	inline void _DMATRIX9::SetScreenSpaceMatrix(DWORD dwScreenWidth, DWORD dwScreenHeight)
 	{
 		MakeIdentity();
-		SetTranslation(DVECTOR3(0.5f + 0.5f / dwScreenWidth, 0.5f + 0.5f / dwScreenHeight, 0.0f));
-		SetScale(DVECTOR3(0.5f, -0.5f, 1.0f));
+		SetTranslation(_DVECTOR3(0.5f + 0.5f / dwScreenWidth, 0.5f + 0.5f / dwScreenHeight, 0.0f));
+		SetScale(_DVECTOR3(0.5f, -0.5f, 1.0f));
 	}
 
 	inline bool _DMATRIX9::GetInverse(_DMATRIX9* pOut, float* fDet) const
@@ -688,18 +688,18 @@ namespace dx9
 
 	}
 
-	inline void _DMATRIX9::SetLocalMatrix(DVECTOR3& position, DVECTOR3& dir, DVECTOR3& up)
+	inline void _DMATRIX9::SetLocalMatrix(_DVECTOR3& position, _DVECTOR3& dir, _DVECTOR3& up)
 	{
-		DVECTOR3 NRight = dir.CrossProduct(&up);
+		_DVECTOR3 NRight = dir.CrossProduct(&up);
 
-		if (NRight == DVECTOR3::ZERO)
+		if (NRight == _DVECTOR3::ZERO)
 		{
-			NRight = dir.CrossProduct(DVECTOR3(0, 1, 0));
+			NRight = dir.CrossProduct(_DVECTOR3(0, 1, 0));
 		}
 
-		DVECTOR3 NDir = dir;
-		//DVECTOR3 NUp = CrossProduct(NRight, dir);
-		DVECTOR3 NUp = NRight.CrossProduct(&dir);
+		_DVECTOR3 NDir = dir;
+		//_DVECTOR3 NUp = CrossProduct(NRight, dir);
+		_DVECTOR3 NUp = NRight.CrossProduct(&dir);
 
 		// 회전 값만 있는 행렬을 만들기 위해서 각 축성분을 Normalize해줘야 한다.
 		NRight.Normalize();

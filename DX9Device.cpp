@@ -8,7 +8,7 @@ namespace dx9
 #if defined(_USE_FAKE_VERTEX_)
 	struct _CUSTOM_VERTEX_FOR_2D
 	{
-		dx9::DVECTOR3 position; // The position	
+		dx9::_DVECTOR3 position; // The position	
 		D3DCOLOR    color;    // The color
 		FLOAT       tu, tv;   // The texture coordinates
 		
@@ -172,7 +172,7 @@ namespace dx9
 			}
 	#endif
 			*/
-			DX9_PRESENT_PARAMETERS d3dpp = { 0 };
+			_DX9_PRESENT_PARAMETERS d3dpp = { 0 };
 			InitPresentParameters(&d3dpp);
 
 			if (nullptr != pDirect3D9)
@@ -356,7 +356,7 @@ namespace dx9
 		wrappSetVertexShaderConstantF(4, (float*)&identity, 4);
 	}
 	void C_DX9_DEVICE::DrawTexture2D(
-		LPDX9_TEXTURE _pTexture
+		_DX9_TEXTURE* _pTexture
 		, dk::DRECT _rcDisplay
 		, dk::DRECT _rcSource
 		, DWORD _dwColor
@@ -462,7 +462,7 @@ namespace dx9
 			tw = -((float)(_rcSource.right - _rcSource.left) / (float)(v2DisplaySize.x));
 		}
 		// Z축을 회전축으로 해 회전하는 행렬을 생성 한다.
-		dx9::DMATRIX9 usermatrix;
+		dx9::_DMATRIX9 usermatrix;
 		::D3DXMatrixRotationZ(&usermatrix, _nAngle * 3.1415f / 180.0f);
 		// 행렬의 전치행렬을 돌려준다.
 		::D3DXMatrixTranspose(&usermatrix, &usermatrix);
@@ -600,7 +600,7 @@ namespace dx9
 		return bPrevious;
 	}
 
-	void C_DX9_DEVICE::InitPresentParameters(LPDX9_PRESENT_PARAMETERS _d3dpp)
+	void C_DX9_DEVICE::InitPresentParameters(_DX9_PRESENT_PARAMETERS* _d3dpp)
 	{
 		// 모니터 사이즈로 초기화 함, 결국에는 리셋 디바이스때문에 맞춰서 쓰게 고친다.
 		//_d3dpp->BackBufferWidth = rectRender.right = 3840;//::GetSystemMetrics(SM_CXSCREEN);
@@ -636,7 +636,7 @@ namespace dx9
 		_d3dpp->PresentationInterval = bVerticalSync ? D3DPRESENT_INTERVAL_DEFAULT : D3DPRESENT_INTERVAL_IMMEDIATE;
 	}
 
-	long C_DX9_DEVICE::CheckResourceFormat(D3DFORMAT fmt, D3DRESOURCETYPE resType, DWORD dwUsage)
+	long C_DX9_DEVICE::CheckResourceFormat(_D3DFORMAT fmt, D3DRESOURCETYPE resType, DWORD dwUsage)
 	{
 		D3DCAPS9 devCaps;
 		pDevice->GetDeviceCaps(&devCaps);
@@ -811,7 +811,7 @@ namespace dx9
 		}
 	}
 
-	bool C_DX9_DEVICE::InitLayeredTexture(D3DFORMAT format, D3DFORMAT depthStencil)
+	bool C_DX9_DEVICE::InitLayeredTexture(_D3DFORMAT format, _D3DFORMAT depthStencil)
 	{
 		bool bResult = false;
 		//sizeLayeredScreen.SetSize(::GetSystemMetrics(SM_CXSCREEN), ::GetSystemMetrics(SM_CYSCREEN));
@@ -889,9 +889,9 @@ namespace dx9
 	}
 #endif
 
-	LPDX9_VERTEX_BUFFER C_DX9_DEVICE::wrappCreateVertexBuffer(UINT _nStructSize, DWORD _nCreateCount, DWORD _dwFVF, DWORD _dwFlags, LPVOID _pData)
+	_DX9_VERTEX_BUFFER* C_DX9_DEVICE::wrappCreateVertexBuffer(UINT _nStructSize, DWORD _nCreateCount, DWORD _dwFVF, DWORD _dwFlags, LPVOID _pData)
 	{
-		LPDX9_VERTEX_BUFFER pDX9VertexBuffer = new DX9_VERTEX_BUFFER(_nStructSize, _nCreateCount, _dwFVF, _dwFlags);
+		_DX9_VERTEX_BUFFER* pDX9VertexBuffer = new _DX9_VERTEX_BUFFER(_nStructSize, _nCreateCount, _dwFVF, _dwFlags);
 		UINT nSize = _nStructSize * _nCreateCount;
 		
 		if (pDX9VertexBuffer->Create(pDevice))
@@ -917,10 +917,10 @@ namespace dx9
 		return(pDX9VertexBuffer);
 	}
 
-	void C_DX9_DEVICE::DeleteVertexBuffer(LPDX9_VERTEX_BUFFER _pDX9VertexBuffer)
+	void C_DX9_DEVICE::DeleteVertexBuffer(_DX9_VERTEX_BUFFER* _pDX9VertexBuffer)
 	{
 		_pDX9VertexBuffer->Release();	// 디바이스 해제하고
-		for (std::list<LPDX9_VERTEX_BUFFER>::const_iterator i = listDX9VertexBuffers.begin(); i != listDX9VertexBuffers.end();++i)
+		for (std::list<_DX9_VERTEX_BUFFER*>::const_iterator i = listDX9VertexBuffers.begin(); i != listDX9VertexBuffers.end();++i)
 		{
 			if (*i == _pDX9VertexBuffer)
 			{
@@ -931,9 +931,9 @@ namespace dx9
 		}
 	}
 	
-	LPDX9_INDEX_BUFFER C_DX9_DEVICE::wrappCreateIndexBuffer(UINT _nCreateCount, DWORD _dwFlags, LPVOID _pData)
+	_DX9_INDEX_BUFFER* C_DX9_DEVICE::wrappCreateIndexBuffer(UINT _nCreateCount, DWORD _dwFlags, LPVOID _pData)
 	{
-		LPDX9_INDEX_BUFFER pDX9IndexBuffer = new DX9_INDEX_BUFFER(sizeof(WORD), _nCreateCount, _dwFlags);
+		_DX9_INDEX_BUFFER* pDX9IndexBuffer = new _DX9_INDEX_BUFFER(sizeof(WORD), _nCreateCount, _dwFlags);
 
 		UINT nSize = sizeof(WORD) * _nCreateCount;
 		if (pDX9IndexBuffer->Create(pDevice))
@@ -959,10 +959,10 @@ namespace dx9
 		return(pDX9IndexBuffer);
 	}
 
-	void C_DX9_DEVICE::DeleteIndexBuffer(LPDX9_INDEX_BUFFER _pDX9IndexBuffer)
+	void C_DX9_DEVICE::DeleteIndexBuffer(_DX9_INDEX_BUFFER* _pDX9IndexBuffer)
 	{
 		_pDX9IndexBuffer->Release();	// 디바이스 해제하고
-		for (std::list<LPDX9_INDEX_BUFFER>::const_iterator i = listDX9IndexBuffers.begin(); i != listDX9IndexBuffers.end();++i)
+		for (std::list<_DX9_INDEX_BUFFER*>::const_iterator i = listDX9IndexBuffers.begin(); i != listDX9IndexBuffers.end();++i)
 		{
 			if (*i == _pDX9IndexBuffer)
 			{
@@ -972,20 +972,20 @@ namespace dx9
 			}
 		}
 	}
-	LPDX9_TEXTURE C_DX9_DEVICE::wrappCreateTexture(LPCWSTR pFile)
+	_DX9_TEXTURE* C_DX9_DEVICE::wrappCreateTexture(LPCWSTR pFile)
 	{
 		//DBGPRINT("wrappCreateTexture()");
-		LPDX9_TEXTURE pDX9Texture = new DX9_TEXTURE(pDevice);
+		_DX9_TEXTURE* pDX9Texture = new _DX9_TEXTURE(pDevice);
 		pDX9Texture->LoadTexture(pFile);
 		//DBGPRINT("wrappCreateTexture(Create Start)");
 		listDX9Textures.push_back(pDX9Texture);
 
 		return(pDX9Texture);
 	}
-	LPDX9_TEXTURE C_DX9_DEVICE::wrappCreateTexture(DWORD _nWidth, DWORD _nHeight, D3DFORMAT _d3dFormat, DWORD _dwFlags)
+	_DX9_TEXTURE* C_DX9_DEVICE::wrappCreateTexture(DWORD _nWidth, DWORD _nHeight, _D3DFORMAT _d3dFormat, DWORD _dwFlags)
 	{
 		//DBGPRINT("wrappCreateTexture()");
-		LPDX9_TEXTURE pDX9Texture = new DX9_TEXTURE(
+		_DX9_TEXTURE* pDX9Texture = new _DX9_TEXTURE(
 			pDevice
 			, _nWidth
 			, _nHeight
@@ -998,12 +998,12 @@ namespace dx9
 
 		return(pDX9Texture);
 	}
-	void C_DX9_DEVICE::DeleteTexture(LPDX9_TEXTURE _pDX9Texture)
+	void C_DX9_DEVICE::DeleteTexture(_DX9_TEXTURE* _pDX9Texture)
 	{
 		if (_pDX9Texture)
 		{
 			DSAFE_RELEASE(_pDX9Texture);	// 디바이스 해제하고
-			for (std::list<LPDX9_TEXTURE>::const_iterator i = listDX9Textures.begin(); i != listDX9Textures.end(); ++i)
+			for (std::list<_DX9_TEXTURE*>::const_iterator i = listDX9Textures.begin(); i != listDX9Textures.end(); ++i)
 			{
 				if (*i == _pDX9Texture)
 				{
@@ -1015,10 +1015,10 @@ namespace dx9
 		}
 	}
 
-	LPDX9_FONT C_DX9_DEVICE::wrappCreateFont(LPCWSTR _wszName, int _nSize, UINT _nWeight, UINT _nCharset, bool _bItalic, bool _bAntiAliased)
+	_DX9_FONT* C_DX9_DEVICE::wrappCreateFont(LPCWSTR _wszName, int _nSize, UINT _nWeight, UINT _nCharset, bool _bItalic, bool _bAntiAliased)
 	{
 		DBGPRINT("pDevice: %x", pDevice);
-		LPDX9_FONT pDX9Font = new DX9_FONT(
+		_DX9_FONT* pDX9Font = new _DX9_FONT(
 			pDevice 
 			, _wszName
 			, _nSize
@@ -1032,10 +1032,10 @@ namespace dx9
 		return(pDX9Font);
 	}
 
-	void C_DX9_DEVICE::wrappDeleteFont(LPDX9_FONT _pDX9Font)
+	void C_DX9_DEVICE::wrappDeleteFont(_DX9_FONT* _pDX9Font)
 	{
 		_pDX9Font->Release();	// 디바이스 해제하고
-		for (std::list<LPDX9_FONT>::const_iterator i = listDX9Fonts.begin(); i != listDX9Fonts.end();++i)
+		for (std::list<_DX9_FONT*>::const_iterator i = listDX9Fonts.begin(); i != listDX9Fonts.end();++i)
 		{
 			if (*i == _pDX9Font)
 			{
@@ -1134,7 +1134,7 @@ namespace dx9
 		return _nIndex;
 	}
 
-	void C_DX9_DEVICE::wrappSetTexture(int nStage, LPDX9_TEXTURE _pDX9Texture)
+	void C_DX9_DEVICE::wrappSetTexture(int nStage, _DX9_TEXTURE* _pDX9Texture)
 	{
 		/*
 		UINT nSaveIndex = GetSamplerNumberToSaveIndex(nStage);
@@ -1225,7 +1225,7 @@ namespace dx9
 		pDevice->SetVertexShader(NULL);
 		pDevice->SetPixelShader(NULL);
 	}
-	void C_DX9_DEVICE::wrappSetVertexBuffer(LPDX9_VERTEX_BUFFER _pDX9VertexBuffer, int _nStream, UINT _nOffset)
+	void C_DX9_DEVICE::wrappSetVertexBuffer(_DX9_VERTEX_BUFFER* _pDX9VertexBuffer, int _nStream, UINT _nOffset)
 	{
 		pDevice->SetStreamSource(
 			_nStream
@@ -1261,7 +1261,7 @@ namespace dx9
 		*/
 	}
 
-	void C_DX9_DEVICE::wrappSetIndexBuffer(LPDX9_INDEX_BUFFER _pDX9IndexBuffer)
+	void C_DX9_DEVICE::wrappSetIndexBuffer(_DX9_INDEX_BUFFER* _pDX9IndexBuffer)
 	{
 		pDevice->SetIndices(_pDX9IndexBuffer ? _pDX9IndexBuffer->pIndexBuffer : 0);
 		currentIndexBuffer = _pDX9IndexBuffer;
@@ -1323,7 +1323,7 @@ namespace dx9
 		}
 	}
 
-	void C_DX9_DEVICE::wrappSetTransform(_SETTREANSFORM_TYPE type, const DMATRIX9* matrix)
+	void C_DX9_DEVICE::wrappSetTransform(_SETTREANSFORM_TYPE type, const _DMATRIX9* matrix)
 	{
 		D3DTRANSFORMSTATETYPE d3dtransformtypes[] =
 		{
@@ -1343,7 +1343,7 @@ namespace dx9
 		currentTransform[type].Set(matrix);
 	}
 
-	DMATRIX9 C_DX9_DEVICE::wrappGetTransform(_SETTREANSFORM_TYPE type) const
+	_DMATRIX9 C_DX9_DEVICE::wrappGetTransform(_SETTREANSFORM_TYPE type) const
 	{
 		return currentTransform[type];
 	}
@@ -1372,7 +1372,7 @@ namespace dx9
 
 			OnLostDevice();
 
-			DX9_PRESENT_PARAMETERS d3dpp(nullptr != _pSize ? _pSize->cx : 0, nullptr != _pSize ? _pSize->cy : 0);
+			_DX9_PRESENT_PARAMETERS d3dpp(nullptr != _pSize ? _pSize->cx : 0, nullptr != _pSize ? _pSize->cy : 0);
 			InitPresentParameters(&d3dpp);
 			HRESULT hr = pDevice->Reset(&d3dpp);
 			if (hr == D3DERR_INVALIDCALL)
@@ -1408,9 +1408,9 @@ namespace dx9
 		DSAFE_RELEASE(pStateBlock);
 
 		// 모든 텍스쳐 제거
-		for (std::list<LPDX9_TEXTURE>::const_iterator i = listDX9Textures.begin(); i != listDX9Textures.end();++i)
+		for (std::list<_DX9_TEXTURE*>::const_iterator i = listDX9Textures.begin(); i != listDX9Textures.end();++i)
 		{
-			LPDX9_TEXTURE pDX9Texture = *i;
+			_DX9_TEXTURE* pDX9Texture = *i;
 			if (nullptr == pDX9Texture->pTexture)			// 이미 제거 되었는가?
 			{
 				listDX9Textures.erase(i);					// 그렇다면 리스트에서 제거
@@ -1419,9 +1419,9 @@ namespace dx9
 		}
 
 		// 모든 버텍스버퍼 해제
-		for (std::list<LPDX9_VERTEX_BUFFER>::const_iterator i = listDX9VertexBuffers.begin(); i != listDX9VertexBuffers.end();++i)
+		for (std::list<_DX9_VERTEX_BUFFER*>::const_iterator i = listDX9VertexBuffers.begin(); i != listDX9VertexBuffers.end();++i)
 		{
-			LPDX9_VERTEX_BUFFER pDX9VertexBuffer = *i;
+			_DX9_VERTEX_BUFFER* pDX9VertexBuffer = *i;
 			if (nullptr == pDX9VertexBuffer->pVertexBuffer)		// 이미 제거 되었는가?
 			{
 				listDX9VertexBuffers.erase(i);					// 그렇다면 리스트에서 제거
@@ -1432,9 +1432,9 @@ namespace dx9
 			}
 		}
 		// 모든 인덱스버퍼 해제
-		for (std::list<LPDX9_INDEX_BUFFER>::const_iterator i = listDX9IndexBuffers.begin(); i != listDX9IndexBuffers.end();++i)
+		for (std::list<_DX9_INDEX_BUFFER*>::const_iterator i = listDX9IndexBuffers.begin(); i != listDX9IndexBuffers.end();++i)
 		{
-			LPDX9_INDEX_BUFFER pDX9IndexBuffer = *i;
+			_DX9_INDEX_BUFFER* pDX9IndexBuffer = *i;
 			if (nullptr == pDX9IndexBuffer->pIndexBuffer)		// 이미 제거 되었는가?
 			{
 				listDX9IndexBuffers.erase(i);					// 그렇다면 리스트에서 제거
@@ -1446,9 +1446,9 @@ namespace dx9
 		}
 
 		// 모든 폰트 제거
-		for (std::list<LPDX9_FONT>::const_iterator i = listDX9Fonts.begin(); i != listDX9Fonts.end();++i)
+		for (std::list<_DX9_FONT*>::const_iterator i = listDX9Fonts.begin(); i != listDX9Fonts.end();++i)
 		{
-			LPDX9_FONT pDX9Font = *i;
+			_DX9_FONT* pDX9Font = *i;
 			if (nullptr == pDX9Font->GetFont())			// 이미 제거 되었는가?
 			{
 				listDX9Fonts.erase(i);					// 그렇다면 리스트에서 제거
@@ -1497,16 +1497,16 @@ namespace dx9
 		//pSprite->OnResetDevice();
 
 		// 모든 텍스쳐 복구
-		for (std::list<LPDX9_TEXTURE>::const_iterator i = listDX9Textures.begin(); i != listDX9Textures.end();++i)
+		for (std::list<_DX9_TEXTURE*>::const_iterator i = listDX9Textures.begin(); i != listDX9Textures.end();++i)
 		{
-			LPDX9_TEXTURE pDX9Texture = *i;
+			_DX9_TEXTURE* pDX9Texture = *i;
 			pDX9Texture->OnResetDevice();
 		}
 
 		// 모든 버텍스버퍼 복구
-		for (std::list<LPDX9_VERTEX_BUFFER>::const_iterator i = listDX9VertexBuffers.begin(); i != listDX9VertexBuffers.end();++i)
+		for (std::list<_DX9_VERTEX_BUFFER*>::const_iterator i = listDX9VertexBuffers.begin(); i != listDX9VertexBuffers.end();++i)
 		{
-			LPDX9_VERTEX_BUFFER pDX9VertexBuffer = *i;
+			_DX9_VERTEX_BUFFER* pDX9VertexBuffer = *i;
 			if (D3DPOOL_DEFAULT == pDX9VertexBuffer->d3dPool)	// D3DPOOL_DEFAULT 는 리셋시 디바이스가 해제되기 때문에 제거하자
 			{
 				if (nullptr == pDX9VertexBuffer->pVertexBuffer)		// 이미 제거 되었는가?
@@ -1516,9 +1516,9 @@ namespace dx9
 			}
 		}
 		// 모든 인덱스버퍼 복구
-		for (std::list<LPDX9_INDEX_BUFFER>::const_iterator i = listDX9IndexBuffers.begin(); i != listDX9IndexBuffers.end();++i)
+		for (std::list<_DX9_INDEX_BUFFER*>::const_iterator i = listDX9IndexBuffers.begin(); i != listDX9IndexBuffers.end();++i)
 		{
-			LPDX9_INDEX_BUFFER pDX9IndexBuffer = *i;
+			_DX9_INDEX_BUFFER* pDX9IndexBuffer = *i;
 			if (D3DPOOL_DEFAULT == pDX9IndexBuffer->d3dPool)	// D3DPOOL_DEFAULT 는 리셋시 디바이스가 해제되기 때문에 제거하자
 			{
 				if (nullptr == pDX9IndexBuffer->pIndexBuffer)	// 제거 되었는가?
@@ -1530,9 +1530,9 @@ namespace dx9
 		}
 
 		// 모든 폰트 복구
-		for (std::list<LPDX9_FONT>::const_iterator i = listDX9Fonts.begin(); i != listDX9Fonts.end();++i)
+		for (std::list<_DX9_FONT*>::const_iterator i = listDX9Fonts.begin(); i != listDX9Fonts.end();++i)
 		{
-			LPDX9_FONT pDX9Font = *i;
+			_DX9_FONT* pDX9Font = *i;
 			pDX9Font->OnResetDevice();
 		}
 
@@ -1594,13 +1594,13 @@ namespace dx9
 
 		// <d3dx9.h> 또는 <DirectXMath.h>를 사용할 수 있는지 여부에 관계없이 다음의 함수에 의존하지 않음.
 		// D3DXMatrixIdentity()/D3DXMatrixOrthoOffCenterLH() or DirectX::XMMatrixIdentity()/DirectX::XMMatrixOrthographicOffCenterLH()
-		DMATRIX9 matIdentity(
+		_DMATRIX9 matIdentity(
 			1.0f, 0.0f, 0.0f, 0.0f
 			, 0.0f, 1.0f, 0.0f, 0.0f
 			, 0.0f, 0.0f, 1.0f, 0.0f
 			, 0.0f, 0.0f, 0.0f, 1.0f
 		);
-		DMATRIX9 matProj(
+		_DMATRIX9 matProj(
 			2.0f / (fRight - fLeft), 0.0f, 0.0f, 0.0f
 			, 0.0f, 2.0f / (fTop - fBottom), 0.0f, 0.0f
 			, 0.0f, 0.0f, 0.5f, 0.0f

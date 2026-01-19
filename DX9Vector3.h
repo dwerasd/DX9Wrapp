@@ -12,7 +12,7 @@
 
 namespace dx9
 {
-	typedef struct _DVECTOR3
+	struct _DVECTOR3
 		: public D3DXVECTOR3
 	{
 		_DVECTOR3();
@@ -133,6 +133,5 @@ namespace dx9
 		static const _DVECTOR3 AXISX;
 		static const _DVECTOR3 AXISY;
 		static const _DVECTOR3 AXISZ;
-
-	} DVECTOR3, *LPDVECTOR3;
+	};
 }

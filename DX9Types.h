@@ -12,7 +12,7 @@
 namespace dx9
 {
 
-	typedef struct _DX9_PRESENT_PARAMETERS
+	struct _DX9_PRESENT_PARAMETERS
 		: public D3DPRESENT_PARAMETERS
 	{
 		_DX9_PRESENT_PARAMETERS(long _nWidth = 0, long _nHeight = 0)
@@ -26,7 +26,7 @@ namespace dx9
 			MultiSampleQuality = 0;
 
 			SwapEffect = D3DSWAPEFFECT_DISCARD;
-			hDeviceWindow = 0;
+			hDeviceWindow = nullptr;
 			Windowed = TRUE;
 			EnableAutoDepthStencil = TRUE;
 			AutoDepthStencilFormat = D3DFMT_D24S8;
@@ -41,13 +41,13 @@ namespace dx9
 			BackBufferWidth = _nWidth;
 			BackBufferHeight = _nHeight;
 		}
-	} DX9_PRESENT_PARAMETERS, *LPDX9_PRESENT_PARAMETERS;
+	};
 
 	struct _DFSIZE;
 	struct _DFPOINT;
 	struct _DFRECT;
 
-	typedef struct _DFSIZE
+	struct _DFSIZE
 	{
 		float cx;
 		float cy;
@@ -83,12 +83,12 @@ namespace dx9
 		_DFPOINT operator+(_DFPOINT point) const throw();
 		_DFPOINT operator-(_DFPOINT point) const throw();
 
-	} DFSIZE, *LPDFSIZE;
+	};
 
 	/////////////////////////////////////////////////////////////////////////////
 	// _DFPOINT - A 2-D point, similar to Windows _DFPOINT structure.
 
-	typedef struct _DFPOINT
+	struct _DFPOINT
 	{
 		float x, y;
 		// create an uninitialized point
@@ -143,12 +143,12 @@ namespace dx9
 		_DFPOINT operator-() const throw();
 		// Operators returning _DFSIZE values
 		_DFPOINT operator-(_DFPOINT point) const throw();
-	} DFPOINT, *LPDFPOINT;
+	};
 
 	/////////////////////////////////////////////////////////////////////////////
 	// _DFRECT - A 2-D rectangle, similar to Windows _DFRECT structure.
 	
-	typedef struct _DFRECT
+	struct _DFRECT
 	{
 		float left;
 		float top;
@@ -295,7 +295,7 @@ namespace dx9
 		BOOL operator!=(const _DFRECT& rect) const throw();
 		void operator+=(_DFRECT *lpRect) throw();
 		void operator-=(_DFRECT *lpRect) throw();
-	} DFRECT, *LPDFRECT;
+	};
 
 	// _DFSIZE
 	inline _DFSIZE::_DFSIZE() throw()
@@ -866,23 +866,23 @@ namespace dx9
 		bottom -= b;
 	}
 	// 2D axis aligned bounding-box
-	// NB: we can't rely on dk::DVECTOR2 math operators being available here
-	typedef struct _DV2RECT
+	// NB: we can't rely on dk::_DVECTOR2 math operators being available here
+	struct _DV2RECT
 	{
-		dx9::DVECTOR2      Min;    // Upper-left
-		dx9::DVECTOR2      Max;    // Lower-right
+		dx9::_DVECTOR2      Min;    // Upper-left
+		dx9::_DVECTOR2      Max;    // Lower-right
 
 		_DV2RECT()
 			: Min(FLT_MAX, FLT_MAX)
 			, Max(-FLT_MAX, -FLT_MAX)
 		{
 		}
-		_DV2RECT(const dx9::DVECTOR2& min, const dx9::DVECTOR2& max)
+		_DV2RECT(const dx9::_DVECTOR2& min, const dx9::_DVECTOR2& max)
 			: Min(min)
 			, Max(max)
 		{
 		}
-		_DV2RECT(const dx9::DVECTOR4& v)
+		_DV2RECT(const dx9::_DVECTOR4& v)
 			:Min(v.x, v.y)
 			, Max(v.z, v.w)
 		{
@@ -937,13 +937,13 @@ namespace dx9
 			Max.x = _vrc->Max.x;
 			Max.y = _vrc->Max.y;
 		}
-		dx9::DVECTOR2 GetCenter() const
+		dx9::_DVECTOR2 GetCenter() const
 		{
-			return dx9::DVECTOR2((Min.x + Max.x) * 0.5f, (Min.y + Max.y) * 0.5f);
+			return dx9::_DVECTOR2((Min.x + Max.x) * 0.5f, (Min.y + Max.y) * 0.5f);
 		}
-		dx9::DVECTOR2 GetSize() const
+		dx9::_DVECTOR2 GetSize() const
 		{
-			return dx9::DVECTOR2(Max.x - Min.x, Max.y - Min.y);
+			return dx9::_DVECTOR2(Max.x - Min.x, Max.y - Min.y);
 		}
 		float GetWidth() const
 		{
@@ -953,23 +953,23 @@ namespace dx9
 		{
 			return Max.y - Min.y;
 		}
-		dx9::DVECTOR2 GetTL() const	// Top-Min.x
+		dx9::_DVECTOR2 GetTL() const	// Top-Min.x
 		{
 			return Min;
 		}
-		dx9::DVECTOR2 GetTR() const	// Top-Max.x
+		dx9::_DVECTOR2 GetTR() const	// Top-Max.x
 		{
-			return dx9::DVECTOR2(Max.x, Min.y);
+			return dx9::_DVECTOR2(Max.x, Min.y);
 		}
-		dx9::DVECTOR2 GetBL() const	// Bottom-Min.x
+		dx9::_DVECTOR2 GetBL() const	// Bottom-Min.x
 		{
-			return dx9::DVECTOR2(Min.x, Max.y);
+			return dx9::_DVECTOR2(Min.x, Max.y);
 		}
-		dx9::DVECTOR2 GetBR() const	// Bottom-Max.x
+		dx9::_DVECTOR2 GetBR() const	// Bottom-Max.x
 		{
 			return Max;
 		}
-		bool Contains(const dx9::DVECTOR2& p) const
+		bool Contains(const dx9::_DVECTOR2& p) const
 		{
 			return p.x >= Min.x && p.y >= Min.y && p.x < Max.x && p.y < Max.y;
 		}
@@ -981,7 +981,7 @@ namespace dx9
 		{
 			return r.Min.y <  Max.y && r.Max.y >  Min.y && r.Min.x <  Max.x && r.Max.x >  Min.x;
 		}
-		void Add(const dx9::DVECTOR2& p)
+		void Add(const dx9::_DVECTOR2& p)
 		{
 			if (Min.x > p.x)
 				Min.x = p.x;
@@ -1016,14 +1016,14 @@ namespace dx9
 			Max.x += amount;
 			Max.y += amount;
 		}
-		void Expand(const dx9::DVECTOR2& amount)
+		void Expand(const dx9::_DVECTOR2& amount)
 		{
 			Min.x -= amount.x;
 			Min.y -= amount.y;
 			Max.x += amount.x;
 			Max.y += amount.y;
 		}
-		void Translate(const dx9::DVECTOR2& d)
+		void Translate(const dx9::_DVECTOR2& d)
 		{
 			Min.x += d.x;
 			Min.y += d.y;
@@ -1100,197 +1100,7 @@ namespace dx9
 			Max.x = Max.y = -FLT_MAX;
 		}
 
-	} DV2RECT, *LPDV2RECT;
-	/*
-	typedef struct _DV2RECT
-	{
-		//dx9::DVECTOR2      Min;    // Upper-left
-		//dx9::DVECTOR2      Max;    // Lower-right
-		float left;
-		float top;
-		float right;
-		float bottom;
-
-		_DV2RECT()
-			: left(FLT_MAX)
-			, top(FLT_MAX)
-			, right(-FLT_MAX)
-			, bottom(-FLT_MAX)
-		{
-		}
-		_DV2RECT(float _left, float _top, float _right, float _bottom)
-			: left(_left)
-			, top(_top)
-			, right(_right)
-			, bottom(_bottom)
-		{
-		}
-		_DV2RECT(const dx9::DVECTOR2& min, const dx9::DVECTOR2& max)
-			: left(min.x)
-			, top(min.y)
-			, right(max.x)
-			, bottom(max.x)
-		{
-		}
-		_DV2RECT(const dx9::DVECTOR4& _v)
-			: left(_v.x)
-			, top(_v.y)
-			, right(_v.z)
-			, bottom(_v.w)
-		{
-		}
-
-		void Set(float _left, float _top, float _right, float _bottom)
-		{
-			left = _left;
-			top = _top;
-			right = _right;
-			bottom = _bottom;
-		}
-
-		void Set(const dx9::DVECTOR2& min, const dx9::DVECTOR2& max)
-		{
-			left = min.x;
-			top = min.y;
-			right = max.x;
-			bottom = max.y;
-		}
-
-		dx9::DVECTOR2 GetCenter() const
-		{
-			return dx9::DVECTOR2((left + right) * 0.5f, (top + bottom) * 0.5f);
-		}
-		dx9::DVECTOR2 GetSize() const
-		{
-			return dx9::DVECTOR2(right - left, bottom - top);
-		}
-		float GetWidth() const
-		{
-			return right - left;
-		}
-		float GetHeight() const
-		{
-			return bottom - top;
-		}
-		dx9::DVECTOR2 GetTL() const
-		{
-			return dx9::DVECTOR2(left, top);
-		}                   // Top-left
-		dx9::DVECTOR2 GetTR() const
-		{
-			return dx9::DVECTOR2(right, top);
-		}  // Top-right
-		dx9::DVECTOR2 GetBL() const
-		{
-			return dx9::DVECTOR2(left, bottom);
-		}  // Bottom-left
-		dx9::DVECTOR2 GetBR() const
-		{
-			return dx9::DVECTOR2(right, bottom);;
-		}                   // Bottom-right
-		bool Contains(const dx9::DVECTOR2& p) const
-		{
-			return p.x >= left && p.y >= top && p.x < right && p.y < bottom;
-		}
-		bool Contains(const _DV2RECT& r) const
-		{
-			return r.left >= left && r.top >= top && r.right <= right && r.bottom <= bottom;
-		}
-		bool Overlaps(const _DV2RECT& r) const
-		{
-			return r.top <  bottom && r.bottom >  top && r.left <  right && r.right >  left;
-		}
-		void Add(const dx9::DVECTOR2& p)
-		{
-			if (left > p.x)
-				left = p.x;
-
-			if (top > p.y)
-				top = p.y;
-
-			if (right < p.x)
-				right = p.x;
-
-			if (bottom < p.y)
-				bottom = p.y;
-		}
-		void Add(const _DV2RECT& r)
-		{
-			if (left > r.left)
-				left = r.left;
-
-			if (top > r.top)
-				top = r.top;
-
-			if (right < r.right)
-				right = r.right;
-
-			if (bottom < r.bottom)
-				bottom = r.bottom;
-		}
-		void Expand(const float amount)
-		{
-			left -= amount;
-			top -= amount;
-			right += amount;
-			bottom += amount;
-		}
-		void Expand(const dx9::DVECTOR2& amount)
-		{
-			left -= amount.x;
-			top -= amount.y;
-			right += amount.x;
-			bottom += amount.y;
-		}
-		void Translate(const dx9::DVECTOR2& d)
-		{
-			left += d.x;
-			top += d.y;
-			right += d.x;
-			bottom += d.y;
-		}
-		void TranslateX(float dx)
-		{
-			left += dx;
-			right += dx;
-		}
-		void TranslateY(float dy)
-		{
-			top += dy;
-			bottom += dy;
-		}
-		void ClipWith(const _DV2RECT& r)	// Simple version, may lead to an inverted rectangle, which is fine for Contains/Overlaps test but not for display.
-		{
-			//Min = v2Max(Min, r.Min);	// left top 은 작은거
-			//Max = v2Min(Max, r.Max);	// right bottom 은 큰거
-			
-			left = fmin(left, r.left);
-			top = fmin(top, r.top);
-			right = fmax(right, r.right);
-			bottom = fmax(bottom, r.bottom);
-		}
-		void ClipWithFull(const _DV2RECT& r)
-		{
-			// x, y = xy, r.xy, r.cxcy
-			// min의 left보다 r.min의 x가 크다면 x, 아닐 경우 min의 left가 r.max의 right보다 크면 right, 아니라면 min의 x
-			left = (left < r.left) ? r.left : (left > r.right) ? r.right : left;
-			top = (top < r.top) ? r.top : (top > r.bottom) ? r.bottom : top;
-			right = (right < r.left) ? r.left : (right > r.right) ? r.right : right;
-			bottom = (bottom < r.top) ? r.top : (bottom > r.bottom) ? r.bottom : bottom;
-		} // Full version, ensure both points are fully clipped.
-		void Floor()
-		{
-			left = (float)(float)left;
-			top = (float)(float)top;
-			right = (float)(float)right;
-			bottom = (float)(float)bottom;
-		}
-		bool IsInverted() const
-		{
-			return left > right || top > bottom;
-		}
-	} DFRECT, *LPDFRECT;
-	*/
+	};
 
 	enum _DX9_QUERY_FEATURE_TYPE_
 	{

@@ -112,7 +112,7 @@ namespace dx9
 			MinZ = p.MinZ;
 			MaxZ = p.MaxZ;
 		}
-		void Set(DVIEWPORT &_Vpt)
+		void Set(_DVIEWPORT &_Vpt)
 		{
 			X = _Vpt.X;
 			Y = _Vpt.Y;
@@ -121,7 +121,7 @@ namespace dx9
 			MinZ = _Vpt.MinZ;
 			MaxZ = _Vpt.MaxZ;
 		}
-		void Set(DVIEWPORT *_pVpt)
+		void Set(_DVIEWPORT *_pVpt)
 		{
 			X = _pVpt->X;
 			Y = _pVpt->Y;
@@ -132,8 +132,8 @@ namespace dx9
 		}
 		_DVIEWPORT9 operator = (_DVIEWPORT9 other);
 		_DVIEWPORT9 operator = (_DVIEWPORT9 *other);
-		_DVIEWPORT9 operator = (DVIEWPORT other);
-		_DVIEWPORT9 operator = (DVIEWPORT *other);
+		_DVIEWPORT9 operator = (_DVIEWPORT other);
+		_DVIEWPORT9 operator = (_DVIEWPORT *other);
 
 	} DVIEWPORT9, *LPDVIEWPORT9;
 }

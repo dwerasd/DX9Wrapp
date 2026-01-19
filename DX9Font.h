@@ -10,11 +10,11 @@
 
 namespace dx9
 {
-	typedef struct _DX9_FONT
+	struct _DX9_FONT
 	{
 	private:
-		LPD3DXFONT pFont;
-		LPDIRECT3DDEVICE9 pDevice;
+		LPD3DXFONT pFont{ nullptr };
+		LPDIRECT3DDEVICE9 pDevice{ nullptr };
 
 		std::wstring wstrName;
 		UINT nSize;
@@ -34,7 +34,7 @@ namespace dx9
 			, bool _bItalic = false
 			, bool _bAntiAliased = false
 		);
-		~_DX9_FONT();
+		virtual ~_DX9_FONT();
 
 		void Create();
 		void Release();
@@ -43,5 +43,5 @@ namespace dx9
 
 		void OnLostDevice();
 		void OnResetDevice();
-	} DX9_FONT, *LPDX9_FONT;
+	};
 }

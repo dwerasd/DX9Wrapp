@@ -9,5 +9,5 @@
 
 namespace dx9
 {
-	bool CursorInArea(dk::LPDPOINT _pPos, LPDFRECT _pRect);
+	bool CursorInArea(dk::LPDPOINT _pPos, _DFRECT* _pRect);
 }

@@ -8,7 +8,7 @@
 namespace dx9
 {
 	// 1D vector (this odd construct is used to facilitate the transition between 1D and 2D, and the maintenance of some branches/patches)
-	typedef struct _DVECTOR1
+	struct _DVECTOR1
 		//: public dk::C_ALIGNED_ALLOCATION_POLICYT<16>
 	{
 		float   x;
@@ -20,6 +20,6 @@ namespace dx9
 			: x(_x)
 		{
 		}
-	} DVECTOR1, *LPDVECTOR1;
+	};
 
 }

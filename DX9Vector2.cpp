@@ -43,11 +43,11 @@ namespace dx9
 		Set(_v2);
 	}
 	/*
-	_DVECTOR2::_DVECTOR2(DFPOINT _v2)
+	_DVECTOR2::_DVECTOR2(_DFPOINT _v2)
 	{
 		Set(_v2);
 	}
-	_DVECTOR2::_DVECTOR2(DFSIZE _v2)
+	_DVECTOR2::_DVECTOR2(_DFSIZE _v2)
 	{
 		Set(_v2);
 	}
@@ -95,22 +95,22 @@ namespace dx9
 		return(*this);
 	}
 	/*
-	_DVECTOR2 _DVECTOR2::operator = (DFPOINT other)
+	_DVECTOR2 _DVECTOR2::operator = (_DFPOINT other)
 	{
 		Set((_DVECTOR2*)other);
 		return(*this);
 	}
-	_DVECTOR2 _DVECTOR2::operator = (DFPOINT* other)
+	_DVECTOR2 _DVECTOR2::operator = (_DFPOINT* other)
 	{
 		Set((_DVECTOR2*)other);
 		return(*this);
 	}
-	_DVECTOR2 _DVECTOR2::operator = (DFSIZE other)
+	_DVECTOR2 _DVECTOR2::operator = (_DFSIZE other)
 	{
 		Set((_DVECTOR2*)other);
 		return(*this);
 	}
-	_DVECTOR2 _DVECTOR2::operator = (DFSIZE* other)
+	_DVECTOR2 _DVECTOR2::operator = (_DFSIZE* other)
 	{
 		Set((_DVECTOR2*)other);
 		return(*this);

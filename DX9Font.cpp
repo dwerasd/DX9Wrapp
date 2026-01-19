@@ -6,15 +6,14 @@
 namespace dx9
 {
 	_DX9_FONT::_DX9_FONT(
-		LPDIRECT3DDEVICE9 _pDevice
+		LPDIRECT3DDEVICE9 pDevice
 		, LPCWSTR _wszName
 		, int _nSize
 		, UINT _nWeight
 		, UINT _nCharset
 		, bool _bItalic
 		, bool _bAntiAliased
-	)	: pDevice(_pDevice)
-		, pFont(nullptr)
+	)	: pDevice(pDevice)
 		, wstrName(_wszName)
 		, nSize(_nSize)
 		, nWeight(_nWeight)

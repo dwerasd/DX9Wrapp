@@ -11,7 +11,7 @@
 
 namespace dx9
 {
-	typedef struct _VERTEX_UV
+	struct _VERTEX_UV
 	{
 		union
 		{
@@ -34,29 +34,26 @@ namespace dx9
 			, u2(0.0f)
 			, v1(0.0f)
 			, v2(0.0f)
-
 		{
-
-		};
+					}
 		_VERTEX_UV(float U1, float U2, float V1, float V2)
 			: u1(U1)
 			, u2(U2)
 			, v1(V1)
 			, v2(V2)
 		{
+		}
+	};
 
-		};
-	} VERTEX_UV, * LPVERTEX_UV;
-
-#define MAX_PIXELSAMPLER	16
-#define MAX_VERTEXSAMPLER	4									// VS 3.0에서 사용하는 버텍스 샘플러 최대 수
-#define MAX_IMAGEUNIT		MAX_PIXELSAMPLER+MAX_VERTEXSAMPLER	// 최대 텍스쳐 유닛 수 + VERTEXSAMPLER 수
-#define RDMAPSAMPLER 256
+	inline constexpr DWORD MAX_PIXELSAMPLER = 16;
+	inline constexpr DWORD MAX_VERTEXSAMPLER = 4;									// VS 3.0에서 사용하는 버텍스 샘플러 최대 수
+	inline constexpr DWORD MAX_IMAGEUNIT = MAX_PIXELSAMPLER + MAX_VERTEXSAMPLER;	// 최대 텍스쳐 유닛 수 + VERTEXSAMPLER 수
+	inline constexpr DWORD RDMAPSAMPLER = 256;
 	//Vertex Texture Sampler(0~4)
-	const int RVERTEXTEXTURESAMPLER0 = (RDMAPSAMPLER + 1);
-	const int RVERTEXTEXTURESAMPLER1 = (RDMAPSAMPLER + 2);
-	const int RVERTEXTEXTURESAMPLER2 = (RDMAPSAMPLER + 3);
-	const int RVERTEXTEXTURESAMPLER3 = (RDMAPSAMPLER + 4);
+	inline constexpr DWORD RVERTEXTEXTURESAMPLER0 = (RDMAPSAMPLER + 1);
+	inline constexpr DWORD RVERTEXTEXTURESAMPLER1 = (RDMAPSAMPLER + 2);
+	inline constexpr DWORD RVERTEXTEXTURESAMPLER2 = (RDMAPSAMPLER + 3);
+	inline constexpr DWORD RVERTEXTEXTURESAMPLER3 = (RDMAPSAMPLER + 4);
 
 	// D3DPOOL_SYSTEMMEM
 	// 보통, 3D 장치에 의해 액세스 할 수 없는 메모리.시스템 RAM 를 사용하지만, 페이징 가능한 RAM 가 줄어들 것은 없다.
@@ -75,26 +72,22 @@ namespace dx9
 	// 잠금 메서드를 사용해, 시스템 메모리 텍스처의 비트를 잠금 및 변경할 수 있다.
 	// 그 후, IDirect3DDevice9::UpdateTexture 를 사용해, 비디오 메모리 텍스처를 갱신할 수 있다.
 
-	typedef struct _DX9_TEXTURE
+	struct _DX9_TEXTURE
 	{
-		LPDIRECT3DTEXTURE9 pTexture;
-		LPDIRECT3DDEVICE9 pDevice;
-		//LPDIRECT3DSURFACE9* rtSurfaces;
-		//int nRenderTargetSurfaces;
-		
-		D3DFORMAT d3dFormat;
-		DWORD dwUsage;
-		D3DPOOL d3dPool;
-		UINT nMipLevels;
-		UINT nWidth, nHeight;
-		
-		dk::C_FILE* pFile;
+		LPDIRECT3DTEXTURE9 pTexture{};
+		LPDIRECT3DDEVICE9 pDevice{};
 
-		//char* pBuffer;
-		//UINT nFileSize;
+		_D3DFORMAT d3dFormat{ D3DFMT_UNKNOWN };
+		D3DPOOL d3dPool{ D3DPOOL_MANAGED };		// 매니저는 자동관리라서 디폴트로 한다
+
+		DWORD dwUsage{};
+		UINT nMipLevels{ 1 };
+		UINT nWidth{}, nHeight{};
+
+		dk::C_FILE* pFile{ nullptr };
 
 		_DX9_TEXTURE(LPDIRECT3DDEVICE9 _pDevice);
-		_DX9_TEXTURE(LPDIRECT3DDEVICE9 _pDevice, UINT _nWidth, UINT _nHeight, D3DFORMAT _d3dFormat = D3DFMT_UNKNOWN, DWORD _dwUsage = 0);
+		_DX9_TEXTURE(LPDIRECT3DDEVICE9 _pDevice, UINT _nWidth, UINT _nHeight, const _D3DFORMAT& _d3dFormat = D3DFMT_UNKNOWN, DWORD _dwUsage = 0);
 
 		bool Create();
 		bool LoadTexture(LPCSTR _tszPath);
@@ -106,5 +99,5 @@ namespace dx9
 		
 		bool IsDynamic();
 
-	} DX9_TEXTURE, * LPDX9_TEXTURE;
+	};
 }

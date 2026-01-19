@@ -13,7 +13,7 @@
 
 namespace dx9
 {
-	typedef struct _DVECTOR2
+	struct _DVECTOR2
 		: public D3DXVECTOR2
 	{
 		_DVECTOR2();
@@ -21,8 +21,8 @@ namespace dx9
 		_DVECTOR2(long fx, long fy);
 		_DVECTOR2(D3DXVECTOR2 _v2);
 		_DVECTOR2(tagSIZE _v2);
-		//_DVECTOR2(DFPOINT _v2);
-		//_DVECTOR2(DFSIZE _v2);
+		//_DVECTOR2(_DFPOINT _v2);
+		//_DVECTOR2(_DFSIZE _v2);
 
 		//_DVECTOR2 operator = (_DVECTOR2 other);
 		_DVECTOR2 operator = (_DVECTOR2 &other);
@@ -33,10 +33,10 @@ namespace dx9
 		_DVECTOR2 operator = (D3DXVECTOR2 other);
 		_DVECTOR2 operator = (D3DXVECTOR2 *other);
 		/*
-		_DVECTOR2 operator = (DFPOINT other);
-		_DVECTOR2 operator = (DFPOINT* other);
-		_DVECTOR2 operator = (DFSIZE other);
-		_DVECTOR2 operator = (DFSIZE* other);
+		_DVECTOR2 operator = (_DFPOINT other);
+		_DVECTOR2 operator = (_DFPOINT* other);
+		_DVECTOR2 operator = (_DFSIZE other);
+		_DVECTOR2 operator = (_DFSIZE* other);
 		*/
 
 		// casting
@@ -58,10 +58,10 @@ namespace dx9
 		void Set(_DVECTOR2 _v) { Set(&_v); }
 		void Set(_DVECTOR2 *_v) { Set(_v->x, _v->y); }
 		/*
-		void Set(DFPOINT _v) { Set(&_v); }
-		void Set(DFPOINT* _v) { Set(_v->x, _v->y); }
-		void Set(DFSIZE _v) { Set(&_v); }
-		void Set(DFSIZE* _v) { Set(_v->cx, _v->cy); }
+		void Set(_DFPOINT _v) { Set(&_v); }
+		void Set(_DFPOINT* _v) { Set(_v->x, _v->y); }
+		void Set(_DFSIZE _v) { Set(&_v); }
+		void Set(_DFSIZE* _v) { Set(_v->cx, _v->cy); }
 		*/
 		void Set(tagSIZE _v) { Set((float)_v.cx, (float)_v.cy); }
 		void Set(tagSIZE *_v) { Set((float)_v->cx, (float)_v->cy); }
@@ -127,55 +127,55 @@ namespace dx9
 		// @return: 라디안 각도
 		float AngleBetween(const _DVECTOR2& _other) const noexcept;
 
-	} DVECTOR2, *LPDVECTOR2;
+	};
 
 	// 2D vector (half-size integer)
-	typedef struct _DVECTOR2IH
+	struct _DVECTOR2IH
 		: public dk::C_ALIGNED_ALLOCATION_POLICYT<16>
 	{
 		short   x, y;
 		_DVECTOR2IH() { x = y = 0; }
 		_DVECTOR2IH(short _x, short _y) { x = _x; y = _y; }
-	} DVECTOR2IH, *LPDVECTOR2IH;
+	};
 
 }
 
-static inline dx9::DVECTOR2 operator*(const dx9::DVECTOR2& lhs, const float rhs)              { return dx9::DVECTOR2(lhs.x*rhs, lhs.y*rhs); }
-static inline dx9::DVECTOR2 operator/(const dx9::DVECTOR2& lhs, const float rhs)              { return dx9::DVECTOR2(lhs.x/rhs, lhs.y/rhs); }
-static inline dx9::DVECTOR2 operator+(const dx9::DVECTOR2& lhs, const dx9::DVECTOR2& rhs)            { return dx9::DVECTOR2(lhs.x+rhs.x, lhs.y+rhs.y); }
-static inline dx9::DVECTOR2 operator-(const dx9::DVECTOR2& lhs, const dx9::DVECTOR2& rhs)            { return dx9::DVECTOR2(lhs.x-rhs.x, lhs.y-rhs.y); }
-static inline dx9::DVECTOR2 operator*(const dx9::DVECTOR2& lhs, const dx9::DVECTOR2& rhs)            { return dx9::DVECTOR2(lhs.x*rhs.x, lhs.y*rhs.y); }
-static inline dx9::DVECTOR2 operator/(const dx9::DVECTOR2& lhs, const dx9::DVECTOR2& rhs)            { return dx9::DVECTOR2(lhs.x/rhs.x, lhs.y/rhs.y); }
-static inline dx9::DVECTOR2& operator+=(dx9::DVECTOR2& lhs, const dx9::DVECTOR2& rhs)                { lhs.x += rhs.x; lhs.y += rhs.y; return lhs; }
-static inline dx9::DVECTOR2& operator-=(dx9::DVECTOR2& lhs, const dx9::DVECTOR2& rhs)                { lhs.x -= rhs.x; lhs.y -= rhs.y; return lhs; }
-static inline dx9::DVECTOR2& operator*=(dx9::DVECTOR2& lhs, const float rhs)                  { lhs.x *= rhs; lhs.y *= rhs; return lhs; }
-static inline dx9::DVECTOR2& operator/=(dx9::DVECTOR2& lhs, const float rhs)                  { lhs.x /= rhs; lhs.y /= rhs; return lhs; }
+inline dx9::_DVECTOR2 operator*(const dx9::_DVECTOR2& lhs, const float rhs)              { return dx9::_DVECTOR2(lhs.x*rhs, lhs.y*rhs); }
+inline dx9::_DVECTOR2 operator/(const dx9::_DVECTOR2& lhs, const float rhs)              { return dx9::_DVECTOR2(lhs.x/rhs, lhs.y/rhs); }
+inline dx9::_DVECTOR2 operator+(const dx9::_DVECTOR2& lhs, const dx9::_DVECTOR2& rhs)            { return dx9::_DVECTOR2(lhs.x+rhs.x, lhs.y+rhs.y); }
+inline dx9::_DVECTOR2 operator-(const dx9::_DVECTOR2& lhs, const dx9::_DVECTOR2& rhs)            { return dx9::_DVECTOR2(lhs.x-rhs.x, lhs.y-rhs.y); }
+inline dx9::_DVECTOR2 operator*(const dx9::_DVECTOR2& lhs, const dx9::_DVECTOR2& rhs)            { return dx9::_DVECTOR2(lhs.x*rhs.x, lhs.y*rhs.y); }
+inline dx9::_DVECTOR2 operator/(const dx9::_DVECTOR2& lhs, const dx9::_DVECTOR2& rhs)            { return dx9::_DVECTOR2(lhs.x/rhs.x, lhs.y/rhs.y); }
+inline dx9::_DVECTOR2& operator+=(dx9::_DVECTOR2& lhs, const dx9::_DVECTOR2& rhs)                { lhs.x += rhs.x; lhs.y += rhs.y; return lhs; }
+inline dx9::_DVECTOR2& operator-=(dx9::_DVECTOR2& lhs, const dx9::_DVECTOR2& rhs)                { lhs.x -= rhs.x; lhs.y -= rhs.y; return lhs; }
+inline dx9::_DVECTOR2& operator*=(dx9::_DVECTOR2& lhs, const float rhs)                  { lhs.x *= rhs; lhs.y *= rhs; return lhs; }
+inline dx9::_DVECTOR2& operator/=(dx9::_DVECTOR2& lhs, const float rhs)                  { lhs.x /= rhs; lhs.y /= rhs; return lhs; }
 
-static inline dx9::DVECTOR2 v2Min(const dx9::DVECTOR2& lhs, const dx9::DVECTOR2& rhs)
+inline dx9::_DVECTOR2 v2Min(const dx9::_DVECTOR2& lhs, const dx9::_DVECTOR2& rhs)
 {
-	return dx9::DVECTOR2(
+	return dx9::_DVECTOR2(
 		lhs.x < rhs.x ? lhs.x : rhs.x
 		, lhs.y < rhs.y ? lhs.y : rhs.y
 	);
 }
-static inline dx9::DVECTOR2 v2Max(const dx9::DVECTOR2& lhs, const dx9::DVECTOR2& rhs)
+inline dx9::_DVECTOR2 v2Max(const dx9::_DVECTOR2& lhs, const dx9::_DVECTOR2& rhs)
 {
-	return dx9::DVECTOR2(
+	return dx9::_DVECTOR2(
 		lhs.x >= rhs.x ? lhs.x : rhs.x
 		, lhs.y >= rhs.y ? lhs.y : rhs.y
 	);
 }
-static inline dx9::DVECTOR2 v2Clamp(const dx9::DVECTOR2& _v, const dx9::DVECTOR2& mn, dx9::DVECTOR2 mx)
+inline dx9::_DVECTOR2 v2Clamp(const dx9::_DVECTOR2& _v, const dx9::_DVECTOR2& mn, dx9::_DVECTOR2 mx)
 {
-	return dx9::DVECTOR2(
+	return dx9::_DVECTOR2(
 		(_v.x < mn.x) ? mn.x : (_v.x > mx.x) ? mx.x : _v.x
 		, (_v.y < mn.y) ? mn.y : (_v.y > mx.y) ? mx.y : _v.y
 	);
 }
 
-static inline dx9::DVECTOR2 v2Lerp(const dx9::DVECTOR2& a, const dx9::DVECTOR2& b, float t) noexcept
+inline dx9::_DVECTOR2 v2Lerp(const dx9::_DVECTOR2& a, const dx9::_DVECTOR2& b, float t) noexcept
 {
-	return dx9::DVECTOR2(
+	return dx9::_DVECTOR2(
 		a.x + (b.x - a.x) * t
 		, a.y + (b.y - a.y) * t
 	);
@@ -185,10 +185,10 @@ static inline dx9::DVECTOR2 v2Lerp(const dx9::DVECTOR2& a, const dx9::DVECTOR2& 
 // @param a: 시작 위치 벡터
 // @param b: 끝 위치 벡터
 // @return: 유클리드 거리
-static inline float v2Distance(const dx9::DVECTOR2& a, const dx9::DVECTOR2& b) noexcept
+inline float v2Distance(const dx9::_DVECTOR2& a, const dx9::_DVECTOR2& b) noexcept
 {
-	float dx_ = b.x - a.x;
-	float dy_ = b.y - a.y;
+	const float dx_ = b.x - a.x;
+	const float dy_ = b.y - a.y;
 	return sqrtf(dx_ * dx_ + dy_ * dy_);
 }
 
@@ -196,10 +196,10 @@ static inline float v2Distance(const dx9::DVECTOR2& a, const dx9::DVECTOR2& b) n
 // @param a: 시작 위치 벡터
 // @param b: 끝 위치 벡터
 // @return: 거리의 제곱
-static inline float v2DistanceSq(const dx9::DVECTOR2& a, const dx9::DVECTOR2& b) noexcept
+inline float v2DistanceSq(const dx9::_DVECTOR2& a, const dx9::_DVECTOR2& b) noexcept
 {
-	float dx_ = b.x - a.x;
-	float dy_ = b.y - a.y;
+	const float dx_ = b.x - a.x;
+	const float dy_ = b.y - a.y;
 	return dx_ * dx_ + dy_ * dy_;
 }
 
@@ -207,17 +207,17 @@ static inline float v2DistanceSq(const dx9::DVECTOR2& a, const dx9::DVECTOR2& b)
 // @param v: 입사 벡터
 // @param n: 법선 벡터 (정규화되어 있어야 함)
 // @return: 반사된 벡터
-static inline dx9::DVECTOR2 v2Reflect(const dx9::DVECTOR2& v, const dx9::DVECTOR2& n) noexcept
+inline dx9::_DVECTOR2 v2Reflect(const dx9::_DVECTOR2& v, const dx9::_DVECTOR2& n) noexcept
 {
-	float d_ = 2.0f * (v.x * n.x + v.y * n.y);
-	return dx9::DVECTOR2(v.x - d_ * n.x, v.y - d_ * n.y);
+	const float d_ = 2.0f * (v.x * n.x + v.y * n.y);
+	return dx9::_DVECTOR2(v.x - d_ * n.x, v.y - d_ * n.y);
 }
 
 // 벡터의 내적 계산
 // @param a: 첫 번째 벡터
 // @param b: 두 번째 벡터
 // @return: 내적 결과
-static inline float v2Dot(const dx9::DVECTOR2& a, const dx9::DVECTOR2& b) noexcept
+inline float v2Dot(const dx9::_DVECTOR2& a, const dx9::_DVECTOR2& b) noexcept
 {
 	return a.x * b.x + a.y * b.y;
 }
@@ -225,13 +225,13 @@ static inline float v2Dot(const dx9::DVECTOR2& a, const dx9::DVECTOR2& b) noexce
 // 벡터 정규화
 // @param v: 정규화할 벡터
 // @return: 정규화된 벡터
-static inline dx9::DVECTOR2 v2Normalize(const dx9::DVECTOR2& v) noexcept
+inline dx9::_DVECTOR2 v2Normalize(const dx9::_DVECTOR2& v) noexcept
 {
-	float len_ = sqrtf(v.x * v.x + v.y * v.y);
+	const float len_ = sqrtf(v.x * v.x + v.y * v.y);
 	if (len_ > 0.0f)
 	{
-		float invLen_ = 1.0f / len_;
-		return dx9::DVECTOR2(v.x * invLen_, v.y * invLen_);
+		const float invLen_ = 1.0f / len_;
+		return dx9::_DVECTOR2(v.x * invLen_, v.y * invLen_);
 	}
-	return dx9::DVECTOR2(0.0f, 0.0f);
+	return dx9::_DVECTOR2(0.0f, 0.0f);
 }

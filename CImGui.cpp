@@ -7,9 +7,7 @@
 extern IMGUI_IMPL_API LRESULT ImGui_ImplWin32_WndProcHandler(HWND hWnd, UINT msg, WPARAM wParam, LPARAM lParam);
 C_IMGUI::C_IMGUI(bool _bVerticalSync)
 	: bVerticalSync(_bVerticalSync)
-	, hWnd(nullptr)
-	, pDevice(nullptr)
-	, dkClearColor(114, 140, 153)
+	  , dkClearColor(114, 140, 153)
 {
 
 }
@@ -25,7 +23,7 @@ void C_IMGUI::Init_ImGui(HWND _hWnd, LPDIRECT3DDEVICE9 _pDevice, bool _bVertical
 	this->bVerticalSync = _bVerticalSync;
 	if (!_pDevice)
 	{
-		LPDIRECT3D9 g_pD3D = Direct3DCreate9(D3D_SDK_VERSION);
+		const LPDIRECT3D9 g_pD3D = Direct3DCreate9(D3D_SDK_VERSION);
 		if (g_pD3D)
 		{
 			// Create the D3DDevice
@@ -53,7 +51,7 @@ void C_IMGUI::Init_ImGui(HWND _hWnd, LPDIRECT3DDEVICE9 _pDevice, bool _bVertical
 	ImGui_ImplDX9_Init(this->pDevice);
 
 	// 기본 폰트
-	ImGuiIO& io = ImGui::GetIO();
+	const ImGuiIO& io = ImGui::GetIO();
 	//io.Fonts->AddFontDefault();
 	//io.Fonts->AddFontFromFileTTF("Font/AppleSDGothicNeoB.ttf", 16.0f, 0, io.Fonts->GetGlyphRangesKorean());
 	io.Fonts->AddFontFromFileTTF("Fonts/DungGeunMo.ttf", 16.0f, nullptr, io.Fonts->GetGlyphRangesKorean());
@@ -204,7 +202,7 @@ void C_IMGUI::Clear(DWORD _dwColor, DWORD _dwFlags, float _fZ, DWORD _dwStencil,
 	this->pDevice->SetRenderState(D3DRS_ZENABLE, FALSE);
 	this->pDevice->SetRenderState(D3DRS_ALPHABLENDENABLE, FALSE);
 	this->pDevice->SetRenderState(D3DRS_SCISSORTESTENABLE, FALSE);
-	HRESULT hResult = this->pDevice->Clear(
+	const HRESULT hResult = this->pDevice->Clear(
 		_dwIndex
 		, nullptr
 		, _dwFlags
@@ -348,14 +346,14 @@ LPCSTR toUtf8(LPCWSTR _pwszData)
 	}
 	
 	// 1단계: 포인터 캐시 조회 (리터럴용 - O(1))
-	auto itPtr = g_umapPtrCache.find(_pwszData);
+	const auto itPtr = g_umapPtrCache.find(_pwszData);
 	if (itPtr != g_umapPtrCache.end()) {
 		return itPtr->second.c_str();
 	}
 	
 	// 2단계: 문자열 캐시 조회 (동적 문자열용)
-	std::wstring strKey(_pwszData);
-	auto itStr = g_umapStrCache.find(strKey);
+	const std::wstring strKey(_pwszData);
+	const auto itStr = g_umapStrCache.find(strKey);
 	if (itStr != g_umapStrCache.end()) {
 		// 포인터 캐시에도 등록 (다음 호출 시 O(1))
 		g_umapPtrCache[_pwszData] = itStr->second;
@@ -363,7 +361,7 @@ LPCSTR toUtf8(LPCWSTR _pwszData)
 	}
 	
 	// 3단계: 변환 수행
-	std::string strUtf8 = dk::Utf16ToUtf8(_pwszData);
+	const std::string strUtf8 = dk::Utf16ToUtf8(_pwszData);
 	
 	// 양쪽 캐시에 저장
 	g_umapStrCache[strKey] = strUtf8;
@@ -493,7 +491,7 @@ LPCSTR GetColorName(size_t _nIndex)
 	if (umapImGuiColors.size() > _nIndex)
 	{
 		size_t nIndex = 0;
-		for (UMAP_IMGUI_COLORS::iterator itr = umapImGuiColors.begin(); umapImGuiColors.end() != itr; itr++)
+		for (UMAP_IMGUI_COLORS::iterator itr = umapImGuiColors.begin(); umapImGuiColors.end() != itr; ++itr)
 		{
 			if (nIndex++ == _nIndex)
 			{
@@ -513,7 +511,7 @@ ImVec4 GetColorVec4OfText(LPCSTR _pColorName)
 	}
 	if (_pColorName)
 	{
-		UMAP_IMGUI_COLORS::iterator itr = umapImGuiColors.find(_pColorName);
+		const UMAP_IMGUI_COLORS::iterator itr = umapImGuiColors.find(_pColorName);
 		if (umapImGuiColors.end() != itr)
 		{
 			return(itr->second);
@@ -529,7 +527,7 @@ ImU32 GetColorOfText(LPCSTR _pColorName)
 		ColorInit();
 		bInit = true;
 	}
-	UMAP_IMGUI_COLORS::iterator itr = umapImGuiColors.find(_pColorName);
+	const UMAP_IMGUI_COLORS::iterator itr = umapImGuiColors.find(_pColorName);
 	if (umapImGuiColors.end() != itr)
 	{
 		return(IM_COL32(itr->second.x, itr->second.y, itr->second.z, itr->second.w));

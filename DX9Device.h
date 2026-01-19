@@ -55,8 +55,8 @@ namespace dx9
 		long nLastDeviceStatus;							// 마지막 디바이스 상태.
 
 		HWND hWnd;
-		DVECTOR2 v2DisplayPos;
-		DVECTOR2 v2DisplaySize;
+		_DVECTOR2 v2DisplayPos;
+		_DVECTOR2 v2DisplaySize;
 
 		dk::DRECT rectRender;
 
@@ -65,7 +65,7 @@ namespace dx9
 		//LPD3DXSPRITE				pSprite;
 
 		D3DCAPS9					d3dCaps;			// for Init
-		D3DFORMAT					d3dFormat;			// for FullScreen
+		_D3DFORMAT					d3dFormat;			// for FullScreen
 #if defined(_USE_FAKE_VERTEX_)
 		LPDIRECT3DTEXTURE9			pTextureCombination;
 		LPDIRECT3DVERTEXBUFFER9		pFakeVertexBuffer;
@@ -79,22 +79,22 @@ namespace dx9
 		//typedef std::unordered_map<UINT, _DX9_INDEX_BUFFER*> UMAP_INDEX_BUFFERS;
 		//UMAP_INDEX_BUFFERS umapIndexBuffers;
 
-		std::list<LPDX9_VERTEX_BUFFER>	listDX9VertexBuffers;
-		std::list<LPDX9_INDEX_BUFFER>	listDX9IndexBuffers;
+		std::list<_DX9_VERTEX_BUFFER*>	listDX9VertexBuffers;
+		std::list<_DX9_INDEX_BUFFER*>	listDX9IndexBuffers;
 
-		std::list<LPDX9_TEXTURE>		listDX9Textures;
+		std::list<_DX9_TEXTURE*>		listDX9Textures;
 
-		std::list<LPDX9_FONT>			listDX9Fonts;
+		std::list<_DX9_FONT*>			listDX9Fonts;
 
 		//std::list<C_DX9_FONT*>	m_fonts;			// for LostDevice
 
 		// DX9 상태 백업용(for 2D)
 		LPDIRECT3DSTATEBLOCK9	pStateBlock;
-		DMATRIX9				matWorld, matView, matProjection;
+		_DMATRIX9				matWorld, matView, matProjection;
 
 		unsigned char bytAlphaBlend;
 
-		long CheckResourceFormat(D3DFORMAT fmt, D3DRESOURCETYPE resType, DWORD dwUsage);
+		long CheckResourceFormat(_D3DFORMAT fmt, D3DRESOURCETYPE resType, DWORD dwUsage);
 		void ClearDX9States();
 
 		void InitDeviceDefault();
@@ -114,7 +114,7 @@ namespace dx9
 		void InitFakeVertex();
 		void SetScreenSize();
 		void DrawTexture2D(
-			LPDX9_TEXTURE _pTexture
+			_DX9_TEXTURE* _pTexture
 			, dk::DRECT _rcDisplay
 			, dk::DRECT _rcSource
 			, DWORD _dwColor = D3DCOLOR_ARGB(255, 255, 255, 255)
@@ -128,7 +128,7 @@ namespace dx9
 #endif
 		void Destroy();
 
-		void InitPresentParameters(LPDX9_PRESENT_PARAMETERS d3dpp);
+		void InitPresentParameters(_DX9_PRESENT_PARAMETERS* d3dpp);
 
 		_DEVICE_STATUS_ GetDeviceStatus();
 
@@ -149,30 +149,30 @@ namespace dx9
 		LPDIRECT3DSURFACE9 pSurface, pRenderTargetSurface, pDepthStencilSurface;
 		bool ImageCreate(_IMAGE* pImage);
 		void ImageDestroy(_IMAGE* pImage);
-		bool InitLayeredTexture(D3DFORMAT format, D3DFORMAT depthStencil);
+		bool InitLayeredTexture(_D3DFORMAT format, _D3DFORMAT depthStencil);
 		void CopyLayeredTextureImage();
 		void RedrawLayeredWindow16();
 #endif
 		// 버텍스버퍼에서 구조체 사이즈는 LostDevice 때문에 복구용으로 저장한다
-		LPDX9_VERTEX_BUFFER wrappCreateVertexBuffer(UINT _nStructSize, DWORD _nCreateSize, DWORD _dwFVF = 0, DWORD _dwFlags = 0, LPVOID _pData = nullptr);
-		void DeleteVertexBuffer(LPDX9_VERTEX_BUFFER _pDX9VertexBuffer);
+		_DX9_VERTEX_BUFFER* wrappCreateVertexBuffer(UINT _nStructSize, DWORD _nCreateSize, DWORD _dwFVF = 0, DWORD _dwFlags = 0, LPVOID _pData = nullptr);
+		void DeleteVertexBuffer(_DX9_VERTEX_BUFFER* _pDX9VertexBuffer);
 
-		LPDX9_INDEX_BUFFER wrappCreateIndexBuffer(UINT _nIndices, DWORD _dwFlags = 0, LPVOID _data = nullptr);
-		void DeleteIndexBuffer(LPDX9_INDEX_BUFFER _pDX9IndexBuffer);
+		_DX9_INDEX_BUFFER* wrappCreateIndexBuffer(UINT _nIndices, DWORD _dwFlags = 0, LPVOID _data = nullptr);
+		void DeleteIndexBuffer(_DX9_INDEX_BUFFER* _pDX9IndexBuffer);
 
-		LPDX9_TEXTURE wrappCreateTexture(DWORD _nWidth = 0, DWORD _nHeight = 0, D3DFORMAT _d3dFormat = D3DFMT_A8R8G8B8, DWORD _dwFlags = 0);
-		LPDX9_TEXTURE wrappCreateTexture(LPCWSTR pFile);
-		void DeleteTexture(LPDX9_TEXTURE _pDX9Texture);
+		_DX9_TEXTURE* wrappCreateTexture(DWORD _nWidth = 0, DWORD _nHeight = 0, _D3DFORMAT _d3dFormat = D3DFMT_A8R8G8B8, DWORD _dwFlags = 0);
+		_DX9_TEXTURE* wrappCreateTexture(LPCWSTR pFile);
+		void DeleteTexture(_DX9_TEXTURE* _pDX9Texture);
 
-		LPDX9_FONT wrappCreateFont(LPCWSTR _wszName, int _nSize, UINT _nWeight = FW_NORMAL, UINT _nCharset = DEFAULT_CHARSET, bool _bItalic = false, bool _bAntiAliased = false);
-		void wrappDeleteFont(LPDX9_FONT _pDX9Font);
+		_DX9_FONT* wrappCreateFont(LPCWSTR _wszName, int _nSize, UINT _nWeight = FW_NORMAL, UINT _nCharset = DEFAULT_CHARSET, bool _bItalic = false, bool _bAntiAliased = false);
+		void wrappDeleteFont(_DX9_FONT* _pDX9Font);
 
 		HRESULT wrappBeginScene();
 		void wrappEndScene();
 		void wrappClear(DWORD _dwColor = DARK_COL32_BLACK, DWORD _dwFlags = D3DCLEAR_TARGET | D3DCLEAR_ZBUFFER, float _fZ = 1.0f, DWORD _dwStencil = 0, DWORD _dwIndex = 0);
 		HRESULT wrappPresent(HWND hDestWindowOverride = 0, LPRECT pDst = nullptr, LPRECT pSrc = nullptr, RGNDATA* pDirtyRegion = nullptr);
 
-		void wrappSetTexture(int nStage, LPDX9_TEXTURE pTexture);
+		void wrappSetTexture(int nStage, _DX9_TEXTURE* pTexture);
 
 		HRESULT wrappDrawIndexedPrimitive(D3DPRIMITIVETYPE _PrimitiveType, INT _nBaseVertexIndex, UINT _nMinVertexIndex, UINT _nNumVertices, UINT _nStartIndex, UINT _nPrimCount);
 
@@ -189,8 +189,8 @@ namespace dx9
 
 		void ShaderOff();
 
-		void wrappSetVertexBuffer(LPDX9_VERTEX_BUFFER _pDX9VertexBuffer, int _nStream = 0, UINT _nOffset = 0);
-		void wrappSetIndexBuffer(LPDX9_INDEX_BUFFER pDX9IndexBuffer);
+		void wrappSetVertexBuffer(_DX9_VERTEX_BUFFER* _pDX9VertexBuffer, int _nStream = 0, UINT _nOffset = 0);
+		void wrappSetIndexBuffer(_DX9_INDEX_BUFFER* pDX9IndexBuffer);
 
 		void wrappSetVertexShaderConstantF(UINT _StartRegister, const float* _pConstantData, UINT _Vector4fCount);
 
@@ -200,14 +200,14 @@ namespace dx9
 
 		void wrappSetTextureFilter(int nSampler, _TEXTURE_FILTER_TYPE type);
 
-		void wrappSetTransform(_SETTREANSFORM_TYPE type, const DMATRIX9* matrix);
-		DMATRIX9 wrappGetTransform(_SETTREANSFORM_TYPE type) const;
+		void wrappSetTransform(_SETTREANSFORM_TYPE type, const _DMATRIX9* matrix);
+		_DMATRIX9 wrappGetTransform(_SETTREANSFORM_TYPE type) const;
 
 		LPDIRECT3DDEVICE9 GetDevice() { return(pDevice); }
 
 		void SetDisplaySize(WORD _nWidth, WORD _nHeight) { v2DisplaySize.Set(_nWidth, _nHeight); }
-		LPDVECTOR2 GetDisplayPos() { return(&v2DisplayPos); }
-		LPDVECTOR2 GetDisplaySize() { return(&v2DisplaySize); }
+		_DVECTOR2* GetDisplayPos() { return(&v2DisplayPos); }
+		_DVECTOR2* GetDisplaySize() { return(&v2DisplaySize); }
 
 		bool ResetDevice(dk::LPDSIZE _pSize = nullptr);
 
