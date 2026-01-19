@@ -324,7 +324,8 @@ namespace dx9
 	}
 
 	//------------------------------------------------------------------------
-	// 즉시 렌더링
+	// 즉시 렌더링 (배칭 없이 즉시 그리기)
+	// 단일 스프라이트용 - 인덱스 버퍼 사용으로 DrawPrimitiveUP 대비 일관된 성능 제공
 	//------------------------------------------------------------------------
 	void C_DX9_SPRITE_RENDERER::DrawImmediate(
 		const RECT& _rcDest,
@@ -363,15 +364,23 @@ namespace dx9
 		instance.bLighting = _bLighting;
 
 		// 버텍스 생성
-		_SPRITE_VERTEX vertices[4];
+		_SPRITE_VERTEX vertices[VERTICES_PER_SPRITE];
 		GenerateSpriteVertices(instance, vertices);
 
-		// 즉시 렌더링
+		// 버텍스 버퍼에 단일 쿼드 업로드 (D3DLOCK_DISCARD로 빠른 쓰기)
+		void* pVertexData = nullptr;
+		HRESULT hr = m_pVertexBuffer->Lock(0, VERTICES_PER_SPRITE * sizeof(_SPRITE_VERTEX),
+			&pVertexData, D3DLOCK_DISCARD);
+		if (FAILED(hr))
+			return;
+
+		memcpy(pVertexData, vertices, VERTICES_PER_SPRITE * sizeof(_SPRITE_VERTEX));
+		m_pVertexBuffer->Unlock();
+
+		// 렌더링
 		m_pDevice->BeginScene();
 
 		// 렌더 상태 설정
-		m_pDevice->SetFVF(_SPRITE_VERTEX::FVF);
-		m_pDevice->SetTexture(0, _pTexture);
 		SetupBlendMode(_eBlendMode, _bLighting);
 
 		// 변환 행렬 설정
@@ -382,6 +391,12 @@ namespace dx9
 		m_pDevice->SetTransform(D3DTS_VIEW, &matView);
 		m_pDevice->SetTransform(D3DTS_PROJECTION, &m_matProjection);
 
+		// 버텍스/인덱스 버퍼 바인딩
+		m_pDevice->SetFVF(_SPRITE_VERTEX::FVF);
+		m_pDevice->SetStreamSource(0, m_pVertexBuffer, 0, sizeof(_SPRITE_VERTEX));
+		m_pDevice->SetIndices(m_pIndexBuffer);
+		m_pDevice->SetTexture(0, _pTexture);
+
 		// 텍스처 상태
 		m_pDevice->SetTextureStageState(0, D3DTSS_COLOROP, D3DTOP_MODULATE);
 		m_pDevice->SetTextureStageState(0, D3DTSS_COLORARG1, D3DTA_TEXTURE);
@@ -389,6 +404,11 @@ namespace dx9
 		m_pDevice->SetTextureStageState(0, D3DTSS_ALPHAOP, D3DTOP_MODULATE);
 		m_pDevice->SetTextureStageState(0, D3DTSS_ALPHAARG1, D3DTA_TEXTURE);
 		m_pDevice->SetTextureStageState(0, D3DTSS_ALPHAARG2, D3DTA_DIFFUSE);
+
+		// 렌더 상태
+		m_pDevice->SetRenderState(D3DRS_CULLMODE, D3DCULL_NONE);
+		m_pDevice->SetRenderState(D3DRS_LIGHTING, FALSE);
+		m_pDevice->SetRenderState(D3DRS_ZENABLE, FALSE);
 
 		// 필터링
 		if (instance.fScale == 1.0f && instance.fAngle == 0.0f)
@@ -402,8 +422,15 @@ namespace dx9
 			m_pDevice->SetSamplerState(0, D3DSAMP_MINFILTER, D3DTEXF_LINEAR);
 		}
 
-		// 드로우
-		m_pDevice->DrawPrimitiveUP(D3DPT_TRIANGLEFAN, 2, vertices, sizeof(_SPRITE_VERTEX));
+		// DrawIndexedPrimitive로 렌더링 (인덱스 버퍼 0번부터 쿼드 1개 = 삼각형 2개)
+		m_pDevice->DrawIndexedPrimitive(
+			D3DPT_TRIANGLELIST,
+			0,                      // BaseVertexIndex
+			0,                      // MinVertexIndex
+			VERTICES_PER_SPRITE,    // NumVertices (4)
+			0,                      // StartIndex
+			2                       // PrimitiveCount (삼각형 2개)
+		);
 
 		m_pDevice->EndScene();
 		++m_nDrawCallCount;

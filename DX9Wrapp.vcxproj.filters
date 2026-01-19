@@ -96,6 +96,9 @@
     <ClInclude Include="DX9SpriteCompat.h">
       <Filter>유틸리티\헤더 파일</Filter>
     </ClInclude>
+    <ClInclude Include="DX9SpriteEngine.h">
+      <Filter>본체\헤더 파일</Filter>
+    </ClInclude>
     <ClInclude Include="targetver.h">
       <Filter>본체\헤더 파일</Filter>
     </ClInclude>
@@ -145,6 +148,9 @@
     </ClCompile>
     <ClCompile Include="DX9SpriteCompat.cpp">
       <Filter>유틸리티\소스 파일</Filter>
+    </ClCompile>
+    <ClCompile Include="DX9SpriteEngine.cpp">
+      <Filter>본체\소스 파일</Filter>
     </ClCompile>
   </ItemGroup>
 </Project>
