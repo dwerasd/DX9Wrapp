@@ -336,11 +336,15 @@
     <ClInclude Include="DX9Vector4.h" />
     <ClInclude Include="DX9Buffer.h" />
     <ClInclude Include="DX9Viewport.h" />
+    <ClInclude Include="DX9Sprite.h" />
+    <ClInclude Include="DX9SpriteCompat.h" />
     <ClInclude Include="framework.h" />
     <ClInclude Include="targetver.h" />
   </ItemGroup>
   <ItemGroup>
     <ClCompile Include="CImGui.cpp" />
+    <ClCompile Include="DX9Sprite.cpp" />
+    <ClCompile Include="DX9SpriteCompat.cpp" />
     <ClCompile Include="DX9Device.cpp" />
     <ClCompile Include="DX9Buffer.cpp" />
     <ClCompile Include="DX9DeviceState.cpp" />
