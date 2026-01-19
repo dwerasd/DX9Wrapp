@@ -1,0 +1,138 @@
+﻿<?xml version="1.0" encoding="utf-8"?>
+<Project ToolsVersion="4.0" xmlns="http://schemas.microsoft.com/developer/msbuild/2003">
+  <ItemGroup>
+    <Filter Include="본체">
+      <UniqueIdentifier>{1edb830b-b0e6-41f3-9807-04ce81707330}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="본체\헤더 파일">
+      <UniqueIdentifier>{93995380-89BD-4b04-88EB-625FBE52EBFB}</UniqueIdentifier>
+      <Extensions>h;hh;hpp;hxx;h++;hm;inl;inc;ipp;xsd</Extensions>
+    </Filter>
+    <Filter Include="본체\소스 파일">
+      <UniqueIdentifier>{4FC737F1-C7A5-4376-A066-2A32D752A2FF}</UniqueIdentifier>
+      <Extensions>cpp;c;cc;cxx;c++;def;odl;idl;hpj;bat;asm;asmx</Extensions>
+    </Filter>
+    <Filter Include="본체\리소스 파일">
+      <UniqueIdentifier>{67DA6AB6-F800-4c08-8B7A-83BB121AAD01}</UniqueIdentifier>
+      <Extensions>rc;ico;cur;bmp;dlg;rc2;rct;bin;rgs;gif;jpg;jpeg;jpe;resx;tiff;tif;png;wav;mfcribbon-ms</Extensions>
+    </Filter>
+    <Filter Include="유틸리티">
+      <UniqueIdentifier>{8ebf6002-868f-42fb-a45c-ceba09952fd1}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="유틸리티\헤더 파일">
+      <UniqueIdentifier>{050dcf26-88dd-4814-80e3-d5ac12a816c5}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="유틸리티\소스 파일">
+      <UniqueIdentifier>{f9ebf98c-6c51-42e0-9cff-fc1d0e5f7a4a}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="디바이스">
+      <UniqueIdentifier>{44933d47-7a09-4305-b042-1c9776490ae4}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="imgui">
+      <UniqueIdentifier>{f58e58e7-30df-44fa-ade0-0b64d0167613}</UniqueIdentifier>
+    </Filter>
+  </ItemGroup>
+  <ItemGroup>
+    <ClInclude Include="framework.h">
+      <Filter>본체\헤더 파일</Filter>
+    </ClInclude>
+    <ClInclude Include="DX9Device.h">
+      <Filter>디바이스</Filter>
+    </ClInclude>
+    <ClInclude Include="DX9Def.h">
+      <Filter>디바이스</Filter>
+    </ClInclude>
+    <ClInclude Include="DViewport.h">
+      <Filter>유틸리티\헤더 파일</Filter>
+    </ClInclude>
+    <ClInclude Include="DX9Matrix.h">
+      <Filter>유틸리티\헤더 파일</Filter>
+    </ClInclude>
+    <ClInclude Include="DX9Types.h">
+      <Filter>유틸리티\헤더 파일</Filter>
+    </ClInclude>
+    <ClInclude Include="DX9Vector1.h">
+      <Filter>유틸리티\헤더 파일</Filter>
+    </ClInclude>
+    <ClInclude Include="DX9Vector2.h">
+      <Filter>유틸리티\헤더 파일</Filter>
+    </ClInclude>
+    <ClInclude Include="DX9Vector3.h">
+      <Filter>유틸리티\헤더 파일</Filter>
+    </ClInclude>
+    <ClInclude Include="DX9Vector4.h">
+      <Filter>유틸리티\헤더 파일</Filter>
+    </ClInclude>
+    <ClInclude Include="DX9Viewport.h">
+      <Filter>유틸리티\헤더 파일</Filter>
+    </ClInclude>
+    <ClInclude Include="DX9Buffer.h">
+      <Filter>유틸리티\헤더 파일</Filter>
+    </ClInclude>
+    <ClInclude Include="DX9Texture.h">
+      <Filter>유틸리티\헤더 파일</Filter>
+    </ClInclude>
+    <ClInclude Include="DX9DeviceState.h">
+      <Filter>디바이스</Filter>
+    </ClInclude>
+    <ClInclude Include="DX9Font.h">
+      <Filter>유틸리티\헤더 파일</Filter>
+    </ClInclude>
+    <ClInclude Include="DX9Engine.h">
+      <Filter>본체\헤더 파일</Filter>
+    </ClInclude>
+    <ClInclude Include="DX9Util.h">
+      <Filter>유틸리티\헤더 파일</Filter>
+    </ClInclude>
+    <ClInclude Include="DX9Math.h">
+      <Filter>유틸리티\헤더 파일</Filter>
+    </ClInclude>
+    <ClInclude Include="CImGui.h">
+      <Filter>imgui</Filter>
+    </ClInclude>
+    <ClInclude Include="targetver.h">
+      <Filter>본체\헤더 파일</Filter>
+    </ClInclude>
+  </ItemGroup>
+  <ItemGroup>
+    <ClCompile Include="DX9Device.cpp">
+      <Filter>디바이스</Filter>
+    </ClCompile>
+    <ClCompile Include="DX9Matrix.cpp">
+      <Filter>유틸리티\소스 파일</Filter>
+    </ClCompile>
+    <ClCompile Include="DX9Vector2.cpp">
+      <Filter>유틸리티\소스 파일</Filter>
+    </ClCompile>
+    <ClCompile Include="DX9Vector3.cpp">
+      <Filter>유틸리티\소스 파일</Filter>
+    </ClCompile>
+    <ClCompile Include="DX9Vector4.cpp">
+      <Filter>유틸리티\소스 파일</Filter>
+    </ClCompile>
+    <ClCompile Include="DX9Viewport.cpp">
+      <Filter>유틸리티\소스 파일</Filter>
+    </ClCompile>
+    <ClCompile Include="DX9Buffer.cpp">
+      <Filter>유틸리티\소스 파일</Filter>
+    </ClCompile>
+    <ClCompile Include="DX9Texture.cpp">
+      <Filter>유틸리티\소스 파일</Filter>
+    </ClCompile>
+    <ClCompile Include="DX9DeviceState.cpp">
+      <Filter>디바이스</Filter>
+    </ClCompile>
+    <ClCompile Include="DX9Font.cpp">
+      <Filter>유틸리티\소스 파일</Filter>
+    </ClCompile>
+    <ClCompile Include="DX9Engine.cpp">
+      <Filter>본체\소스 파일</Filter>
+    </ClCompile>
+    <ClCompile Include="DX9Util.cpp">
+      <Filter>유틸리티\소스 파일</Filter>
+    </ClCompile>
+    <ClCompile Include="CImGui.cpp">
+      <Filter>imgui</Filter>
+    </ClCompile>
+  </ItemGroup>
+</Project>
