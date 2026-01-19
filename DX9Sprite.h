@@ -37,15 +37,16 @@ namespace dx9
 
 	//------------------------------------------------------------------------
 	// 스프라이트 버텍스 구조체
-	// FVF: D3DFVF_XYZ | D3DFVF_DIFFUSE | D3DFVF_TEX1
+	// FVF: D3DFVF_XYZRHW | D3DFVF_DIFFUSE | D3DFVF_TEX1 (변환된 좌표 - 화면 좌표 직접 사용)
 	//------------------------------------------------------------------------
 	struct _SPRITE_VERTEX
 	{
-		float x, y, z;          // 위치 (z는 항상 0)
+		float x, y, z;          // 위치 (화면 픽셀 좌표)
+		float rhw;              // RHW (항상 1.0f - 변환된 좌표 표시)
 		DWORD dwColor;          // 색상 (D3DCOLOR)
 		float u, v;             // 텍스처 좌표
 
-		static constexpr DWORD FVF = D3DFVF_XYZ | D3DFVF_DIFFUSE | D3DFVF_TEX1;
+		static constexpr DWORD FVF = D3DFVF_XYZRHW | D3DFVF_DIFFUSE | D3DFVF_TEX1;
 	};
 
 	//------------------------------------------------------------------------
@@ -107,6 +108,7 @@ namespace dx9
 		
 		// 렌더링 상태
 		bool m_bBegun;                                   // Begin() 호출 여부
+		bool m_bExternalDevice;                          // 외부 디바이스 사용 여부 (BeginScene/EndScene 스킵)
 		UINT m_nSpriteCount;                            // 현재 프레임 스프라이트 수
 		UINT m_nDrawCallCount;                          // 현재 프레임 드로우콜 수
 
@@ -126,7 +128,7 @@ namespace dx9
 		//--------------------------------------------------------------------
 		// 초기화/해제
 		//--------------------------------------------------------------------
-		bool Initialize(LPDIRECT3DDEVICE9 _pDevice, UINT _nScreenWidth, UINT _nScreenHeight);
+		bool Initialize(LPDIRECT3DDEVICE9 _pDevice, UINT _nScreenWidth, UINT _nScreenHeight, bool _bExternalDevice = false);
 		void Release();
 		void OnLostDevice();
 		void OnResetDevice();
