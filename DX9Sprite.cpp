@@ -181,7 +181,7 @@ namespace dx9
 	//------------------------------------------------------------------------
 	void C_DX9_SPRITE_RENDERER::Begin()
 	{
-		DBGPRINT("[DX9Sprite] Begin() 호출, m_bBegun=%d, Instances=%zu", m_bBegun ? 1 : 0, m_vInstances.size());
+		// DBGPRINT("[DX9Sprite] Begin() 호출, m_bBegun=%d, Instances=%zu", m_bBegun ? 1 : 0, m_vInstances.size());
 		
 		if (m_bBegun)
 			return;
@@ -198,7 +198,7 @@ namespace dx9
 	//------------------------------------------------------------------------
 	void C_DX9_SPRITE_RENDERER::End()
 	{
-		DBGPRINT("[DX9Sprite] End() 호출, m_bBegun=%d, Instances=%zu", m_bBegun ? 1 : 0, m_vInstances.size());
+		// DBGPRINT("[DX9Sprite] End() 호출, m_bBegun=%d, Instances=%zu", m_bBegun ? 1 : 0, m_vInstances.size());
 		
 		if (!m_bBegun)
 			return;
@@ -215,11 +215,11 @@ namespace dx9
 	{
 		if (m_vInstances.empty())
 		{
-			DBGPRINT("[DX9Sprite] Flush: 인스턴스 없음");
+			// DBGPRINT("[DX9Sprite] Flush: 인스턴스 없음");
 			return;
 		}
 
-		DBGPRINT("[DX9Sprite] Flush: %zu 인스턴스 렌더링", m_vInstances.size());
+		// DBGPRINT("[DX9Sprite] Flush: %zu 인스턴스 렌더링", m_vInstances.size());
 
 		// 배치 구성
 		BuildBatches();
@@ -252,14 +252,14 @@ namespace dx9
 	{
 		static int s_nDrawCallCount = 0;
 		s_nDrawCallCount++;
-		if (s_nDrawCallCount <= 5)
-		{
-			DBGPRINT("[DX9Sprite] Draw 호출 #%d: Dest(%d,%d,%d,%d) Src(%d,%d,%d,%d) TexSize=%dx%d Alpha=%.2f", 
-				s_nDrawCallCount, 
-				_rcDest.left, _rcDest.top, _rcDest.right, _rcDest.bottom,
-				_rcSrc.left, _rcSrc.top, _rcSrc.right, _rcSrc.bottom,
-				_nTexWidth, _nTexHeight, _fAlpha);
-		}
+		// if (s_nDrawCallCount <= 5)
+		// {
+		// 	DBGPRINT("[DX9Sprite] Draw 호출 #%d: Dest(%d,%d,%d,%d) Src(%d,%d,%d,%d) TexSize=%dx%d Alpha=%.2f", 
+		// 		s_nDrawCallCount, 
+		// 		_rcDest.left, _rcDest.top, _rcDest.right, _rcDest.bottom,
+		// 		_rcSrc.left, _rcSrc.top, _rcSrc.right, _rcSrc.bottom,
+		// 		_nTexWidth, _nTexHeight, _fAlpha);
+		// }
 		
 		// 클리핑 체크
 		if (_rcDest.left > static_cast<LONG>(m_nScreenWidth) + 150 ||
@@ -267,20 +267,20 @@ namespace dx9
 			_rcDest.top > static_cast<LONG>(m_nScreenHeight) + 150 ||
 			_rcDest.bottom < -150)
 		{
-			if (s_nDrawCallCount <= 5) DBGPRINT("[DX9Sprite] Draw #%d: 클리핑으로 스킵", s_nDrawCallCount);
+			// if (s_nDrawCallCount <= 5) DBGPRINT("[DX9Sprite] Draw #%d: 클리핑으로 스킵", s_nDrawCallCount);
 			return;
 		}
 
 		// 유효성 체크
 		if (_rcSrc.right - _rcSrc.left <= 0 || _rcSrc.bottom - _rcSrc.top <= 0)
 		{
-			if (s_nDrawCallCount <= 5) DBGPRINT("[DX9Sprite] Draw #%d: rcSrc 유효성 실패 (%d,%d)", s_nDrawCallCount, _rcSrc.right - _rcSrc.left, _rcSrc.bottom - _rcSrc.top);
+			// if (s_nDrawCallCount <= 5) DBGPRINT("[DX9Sprite] Draw #%d: rcSrc 유효성 실패 (%d,%d)", s_nDrawCallCount, _rcSrc.right - _rcSrc.left, _rcSrc.bottom - _rcSrc.top);
 			return;
 		}
 
 		if (_fAlpha <= 0.0f)
 		{
-			if (s_nDrawCallCount <= 5) DBGPRINT("[DX9Sprite] Draw #%d: 알파 0으로 스킵", s_nDrawCallCount);
+			// if (s_nDrawCallCount <= 5) DBGPRINT("[DX9Sprite] Draw #%d: 알파 0으로 스킵", s_nDrawCallCount);
 			return;
 		}
 
@@ -649,29 +649,29 @@ namespace dx9
 		}
 		
 		// 디버그: 첫 번째 스프라이트의 버텍스 좌표 출력
-		static int s_nBuildCount = 0;
-		s_nBuildCount++;
-		if (s_nBuildCount <= 3 && !m_vVertices.empty())
-		{
-			DBGPRINT("[DX9Sprite] BuildBatches #%d: V0(%.1f,%.1f) V1(%.1f,%.1f) V2(%.1f,%.1f) V3(%.1f,%.1f) Color=0x%08X",
-				s_nBuildCount,
-				m_vVertices[0].x, m_vVertices[0].y,
-				m_vVertices[1].x, m_vVertices[1].y,
-				m_vVertices[2].x, m_vVertices[2].y,
-				m_vVertices[3].x, m_vVertices[3].y,
-				m_vVertices[0].dwColor);
-			
-			// UV 좌표 출력
-			DBGPRINT("[DX9Sprite] BuildBatches #%d UV: V0(%.3f,%.3f) V1(%.3f,%.3f) V2(%.3f,%.3f) V3(%.3f,%.3f)",
-				s_nBuildCount,
-				m_vVertices[0].u, m_vVertices[0].v,
-				m_vVertices[1].u, m_vVertices[1].v,
-				m_vVertices[2].u, m_vVertices[2].v,
-				m_vVertices[3].u, m_vVertices[3].v);
-			
-			// 텍스처 포인터 출력
-			DBGPRINT("[DX9Sprite] BuildBatches #%d Texture: %p", s_nBuildCount, m_vInstances[0].pTexture);
-		}
+		// static int s_nBuildCount = 0;
+		// s_nBuildCount++;
+		// if (s_nBuildCount <= 3 && !m_vVertices.empty())
+		// {
+		// 	DBGPRINT("[DX9Sprite] BuildBatches #%d: V0(%.1f,%.1f) V1(%.1f,%.1f) V2(%.1f,%.1f) V3(%.1f,%.1f) Color=0x%08X",
+		// 		s_nBuildCount,
+		// 		m_vVertices[0].x, m_vVertices[0].y,
+		// 		m_vVertices[1].x, m_vVertices[1].y,
+		// 		m_vVertices[2].x, m_vVertices[2].y,
+		// 		m_vVertices[3].x, m_vVertices[3].y,
+		// 		m_vVertices[0].dwColor);
+		// 	
+		// 	// UV 좌표 출력
+		// 	DBGPRINT("[DX9Sprite] BuildBatches #%d UV: V0(%.3f,%.3f) V1(%.3f,%.3f) V2(%.3f,%.3f) V3(%.3f,%.3f)",
+		// 		s_nBuildCount,
+		// 		m_vVertices[0].u, m_vVertices[0].v,
+		// 		m_vVertices[1].u, m_vVertices[1].v,
+		// 		m_vVertices[2].u, m_vVertices[2].v,
+		// 		m_vVertices[3].u, m_vVertices[3].v);
+		// 	
+		// 	// 텍스처 포인터 출력
+		// 	DBGPRINT("[DX9Sprite] BuildBatches #%d Texture: %p", s_nBuildCount, m_vInstances[0].pTexture);
+		// }
 
 		// 배치 구성 (텍스처 + 블렌드모드 + 라이팅이 같으면 배칭)
 		_SPRITE_BATCH currentBatch;
@@ -720,17 +720,17 @@ namespace dx9
 	//------------------------------------------------------------------------
 	void C_DX9_SPRITE_RENDERER::RenderBatches()
 	{
-		static int s_nRenderCount = 0;
-		s_nRenderCount++;
-		bool bLog = (s_nRenderCount <= 5);
+		// static int s_nRenderCount = 0;
+		// s_nRenderCount++;
+		// bool bLog = (s_nRenderCount <= 5);
 		
 		if (m_vBatches.empty() || m_vVertices.empty())
 		{
-			if (bLog) DBGPRINT("[DX9Sprite] RenderBatches: 배치/버텍스 비어있음 (Batches=%zu, Vertices=%zu)", m_vBatches.size(), m_vVertices.size());
+			// if (bLog) DBGPRINT("[DX9Sprite] RenderBatches: 배치/버텍스 비어있음 (Batches=%zu, Vertices=%zu)", m_vBatches.size(), m_vVertices.size());
 			return;
 		}
 		
-		if (bLog) DBGPRINT("[DX9Sprite] RenderBatches #%d: Batches=%zu, Vertices=%zu", s_nRenderCount, m_vBatches.size(), m_vVertices.size());
+		// if (bLog) DBGPRINT("[DX9Sprite] RenderBatches #%d: Batches=%zu, Vertices=%zu", s_nRenderCount, m_vBatches.size(), m_vVertices.size());
 
 		// 버텍스 버퍼 업데이트
 		void* pVertexData = nullptr;
@@ -738,7 +738,7 @@ namespace dx9
 			&pVertexData, D3DLOCK_DISCARD);
 		if (FAILED(hr))
 		{
-			if (bLog) DBGPRINT("[DX9Sprite] RenderBatches: VB Lock 실패 hr=0x%08X", hr);
+			// if (bLog) DBGPRINT("[DX9Sprite] RenderBatches: VB Lock 실패 hr=0x%08X", hr);
 			return;
 		}
 
@@ -801,14 +801,14 @@ namespace dx9
 			// 텍스처 변경
 			if (batch.pTexture != pLastTexture)
 			{
-				HRESULT hrTex = m_pDevice->SetTexture(0, batch.pTexture);
+				m_pDevice->SetTexture(0, batch.pTexture);
 				pLastTexture = batch.pTexture;
 				
 				// 디버그: 텍스처 설정 결과
-				if (bLog)
-				{
-					DBGPRINT("[DX9Sprite] SetTexture(0, %p) hr=0x%08X", batch.pTexture, hrTex);
-				}
+				// if (bLog)
+				// {
+				// 	DBGPRINT("[DX9Sprite] SetTexture(0, %p) hr=0x%08X", batch.pTexture, hrTex);
+				// }
 
 				// 필터링 설정 (배치의 첫 인스턴스 기준)
 				// 간단하게 POINT 필터 사용 (원본 동작과 동일)
@@ -826,8 +826,8 @@ namespace dx9
 				batch.nPrimitiveCount
 			);
 			
-			if (bLog) DBGPRINT("[DX9Sprite] DrawIndexedPrimitive: StartV=%u, VCount=%u, StartI=%u, PrimCount=%u, hr=0x%08X", 
-				batch.nStartVertex, batch.nVertexCount, batch.nStartIndex, batch.nPrimitiveCount, hr);
+			// if (bLog) DBGPRINT("[DX9Sprite] DrawIndexedPrimitive: StartV=%u, VCount=%u, StartI=%u, PrimCount=%u, hr=0x%08X", 
+			// 	batch.nStartVertex, batch.nVertexCount, batch.nStartIndex, batch.nPrimitiveCount, hr);
 
 			++m_nDrawCallCount;
 		}

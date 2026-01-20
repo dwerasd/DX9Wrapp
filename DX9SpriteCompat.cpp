@@ -193,37 +193,37 @@ void WK_DrawSpriteWithTexture(
     C_DX9_SPRITE_ENGINE* pEngine_ = C_DX9_SPRITE_ENGINE::GetInstance();
     if (pEngine_ == nullptr)
     {
-        if (s_nDrawCount <= 3) DBGPRINT("[WK_DrawSprite] ERROR: pEngine_ == nullptr");
+        // if (s_nDrawCount <= 3) DBGPRINT("[WK_DrawSprite] ERROR: pEngine_ == nullptr");
         return;
     }
     if (!pEngine_->IsInitialized())
     {
-        if (s_nDrawCount <= 3) DBGPRINT("[WK_DrawSprite] ERROR: Engine not initialized");
+        // if (s_nDrawCount <= 3) DBGPRINT("[WK_DrawSprite] ERROR: Engine not initialized");
         return;
     }
     
     C_DX9_SPRITE_RENDERER* pRenderer_ = pEngine_->GetSpriteRenderer();
     if (pRenderer_ == nullptr)
     {
-        if (s_nDrawCount <= 3) DBGPRINT("[WK_DrawSprite] ERROR: pRenderer_ == nullptr");
+        // if (s_nDrawCount <= 3) DBGPRINT("[WK_DrawSprite] ERROR: pRenderer_ == nullptr");
         return;
     }
     
     // 텍스처 유효성 검사
     if (_pTexture == nullptr)
     {
-        if (s_nDrawCount <= 3) DBGPRINT("[WK_DrawSprite] ERROR: _pTexture == nullptr");
+        // if (s_nDrawCount <= 3) DBGPRINT("[WK_DrawSprite] ERROR: _pTexture == nullptr");
         return;
     }
     
-    if (s_nDrawCount <= 5)
-    {
-        DBGPRINT("[WK_DrawSprite] #%d: Dest(%d,%d,%d,%d) Src(%d,%d,%d,%d) TexSize=%dx%d Alpha=%.2f Blend=%d",
-            s_nDrawCount,
-            _rectDest.left, _rectDest.top, _rectDest.right, _rectDest.bottom,
-            _rectSrc.left, _rectSrc.top, _rectSrc.right, _rectSrc.bottom,
-            _nSrcFullWidth, _nSrcFullHeight, _fAlpha, _nBlendingType);
-    }
+    // if (s_nDrawCount <= 5)
+    // {
+    //     DBGPRINT("[WK_DrawSprite] #%d: Dest(%d,%d,%d,%d) Src(%d,%d,%d,%d) TexSize=%dx%d Alpha=%.2f Blend=%d",
+    //         s_nDrawCount,
+    //         _rectDest.left, _rectDest.top, _rectDest.right, _rectDest.bottom,
+    //         _rectSrc.left, _rectSrc.top, _rectSrc.right, _rectSrc.bottom,
+    //         _nSrcFullWidth, _nSrcFullHeight, _fAlpha, _nBlendingType);
+    // }
     
     // 정점 색상 계산 (COLORREF → D3DCOLOR)
     // COLORREF: 0x00BBGGRR
