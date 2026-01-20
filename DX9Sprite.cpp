@@ -338,6 +338,10 @@ namespace dx9
 		if (_nBlendType == 0 && _nLighting == 1)
 			eMode = E_BLEND_MODE::BLEND_ALPHA_ADDITIVE;
 
+		//--------------------------------------------------------------------
+		// Wonderking 호환: Draw()로 배칭에 추가 후 즉시 Flush()
+		// DrawImmediate보다 검증된 RenderBatches 코드 경로 사용
+		//--------------------------------------------------------------------
 		Draw(
 			_rcDest,
 			_pTexture,
@@ -352,12 +356,17 @@ namespace dx9
 			_dwColor,
 			_nInvert != 0
 		);
+		
+		// 즉시 렌더링 (매 호출마다 Flush)
+		Flush();
 	}
 
 	//------------------------------------------------------------------------
 	// 즉시 렌더링 (배칭 없이 즉시 그리기)
 	// 단일 스프라이트용 - 인덱스 버퍼 사용으로 DrawPrimitiveUP 대비 일관된 성능 제공
 	//------------------------------------------------------------------------
+	static int s_nDrawImmediateCount = 0;
+	
 	void C_DX9_SPRITE_RENDERER::DrawImmediate(
 		const RECT& _rcDest,
 		LPDIRECT3DTEXTURE9 _pTexture,
@@ -373,6 +382,15 @@ namespace dx9
 		bool _bInvert
 	)
 	{
+		s_nDrawImmediateCount++;
+		if (s_nDrawImmediateCount <= 5)
+		{
+			DBGPRINT("[DrawImmediate] #%d: Dest(%d,%d,%d,%d) Alpha=%.2f pTexture=%p",
+				s_nDrawImmediateCount,
+				_rcDest.left, _rcDest.top, _rcDest.right, _rcDest.bottom,
+				_fAlpha, _pTexture);
+		}
+		
 		// 현재 큐 플러시
 		Flush();
 

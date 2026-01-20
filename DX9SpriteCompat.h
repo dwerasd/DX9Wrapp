@@ -59,8 +59,8 @@ void WK_BeginSpriteBatch();
 void WK_EndSpriteBatch();
 
 /**
- * @brief Wonderking 호환 스프라이트 그리기 함수
- * @details 기존 D3D_DrawTexture와 동일한 시그니처. 내부적으로 배칭 처리됨.
+ * @brief Wonderking 호환 스프라이트 그리기 함수 (텍스처 인덱스 버전)
+ * @details 기존 D3D_DrawTexture와 동일한 시그니처. WK_SetTextureArray로 등록된 배열 사용.
  * 
  * @param _pDevice Direct3D 디바이스 (호환성용, 내부적으로 사용하지 않음)
  * @param _rectDest 화면 출력 영역 (픽셀 좌표)
@@ -77,16 +77,43 @@ void WK_EndSpriteBatch();
  * @param _nInvert 좌우 반전 플래그 (0=정상, 1=좌우반전)
  * 
  * @note 텍스처 포인터는 외부에서 WK_SetTextureArray()로 등록해야 함
- * 
- * 입력 예시:
- *   WK_DrawSprite(pDevice, {100, 100, 164, 164}, 5, {0, 0, 64, 64}, 256, 256, 0, 255, 1.0f, 1.0f, 0, RGB(255,255,255), 0);
- * 
- * 출력: 화면 (100,100)에 64x64 스프라이트가 반투명 블렌딩으로 출력됨
  */
 void WK_DrawSprite(
     LPDIRECT3DDEVICE9 _pDevice,
     RECT _rectDest,
     int _nTextureIndex,
+    RECT _rectSrc,
+    int _nSrcFullWidth,
+    int _nSrcFullHeight,
+    int _nBlendingType,
+    int _nLighting,
+    float _fAlpha,
+    float _fScale,
+    int _nAngle,
+    COLORREF _colorVertex,
+    int _nInvert
+);
+
+/**
+ * @brief Wonderking 호환 스프라이트 그리기 함수 (직접 텍스처 포인터 버전)
+ * @details 텍스처 배열 등록 없이 직접 텍스처 포인터를 전달. DDraw.cpp에서 사용.
+ * 
+ * @param _pTexture 텍스처 포인터 (nullptr이면 무시)
+ * @param _rectDest 화면 출력 영역 (픽셀 좌표)
+ * @param _rectSrc 소스 텍스처 영역 (텍셀 좌표)
+ * @param _nSrcFullWidth 소스 텍스처 전체 너비
+ * @param _nSrcFullHeight 소스 텍스처 전체 높이
+ * @param _nBlendingType 블렌딩 타입 (0-7)
+ * @param _nLighting 조명 값 (0-255)
+ * @param _fAlpha 알파 값 (0.0-1.0)
+ * @param _fScale 스케일 값 (1.0 = 원본 크기)
+ * @param _nAngle 회전 각도 (도 단위)
+ * @param _colorVertex 정점 색상 (COLORREF)
+ * @param _nInvert 좌우 반전 플래그 (0=정상, 1=좌우반전)
+ */
+void WK_DrawSpriteWithTexture(
+    LPDIRECT3DTEXTURE9 _pTexture,
+    RECT _rectDest,
     RECT _rectSrc,
     int _nSrcFullWidth,
     int _nSrcFullHeight,

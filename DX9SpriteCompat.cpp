@@ -8,7 +8,9 @@
 
 #include "framework.h"
 #include "DX9SpriteCompat.h"
+#include "DX9SpriteEngine.h"  // C_DX9_SPRITE_ENGINE 사용을 위해 추가
 #include "DX9Math.h"
+#include <DarkCore/DPrint.h>  // DBGPRINT 매크로 사용
 
 namespace dx9
 {
@@ -152,6 +154,94 @@ void WK_DrawSprite(
     g_pSpriteRenderer->DrawCompat(
         _rectDest,
         pTexture_,
+        _rectSrc,
+        _nSrcFullWidth,
+        _nSrcFullHeight,
+        _nBlendingType,
+        _nLighting,
+        _fAlpha,
+        _fScale,
+        _nAngle,
+        dwColor_,
+        _nInvert
+    );
+}
+
+//==============================================================================
+// WK_DrawSpriteWithTexture - 텍스처 포인터 직접 전달 버전
+//==============================================================================
+static int s_nDrawCount = 0;  // 디버그용 호출 카운터
+
+void WK_DrawSpriteWithTexture(
+    LPDIRECT3DTEXTURE9 _pTexture,
+    RECT _rectDest,
+    RECT _rectSrc,
+    int _nSrcFullWidth,
+    int _nSrcFullHeight,
+    int _nBlendingType,
+    int _nLighting,
+    float _fAlpha,
+    float _fScale,
+    int _nAngle,
+    COLORREF _colorVertex,
+    int _nInvert
+)
+{
+    s_nDrawCount++;
+    
+    // C_DX9_SPRITE_ENGINE의 스프라이트 렌더러 사용 (이미 초기화됨)
+    C_DX9_SPRITE_ENGINE* pEngine_ = C_DX9_SPRITE_ENGINE::GetInstance();
+    if (pEngine_ == nullptr)
+    {
+        if (s_nDrawCount <= 3) DBGPRINT("[WK_DrawSprite] ERROR: pEngine_ == nullptr");
+        return;
+    }
+    if (!pEngine_->IsInitialized())
+    {
+        if (s_nDrawCount <= 3) DBGPRINT("[WK_DrawSprite] ERROR: Engine not initialized");
+        return;
+    }
+    
+    C_DX9_SPRITE_RENDERER* pRenderer_ = pEngine_->GetSpriteRenderer();
+    if (pRenderer_ == nullptr)
+    {
+        if (s_nDrawCount <= 3) DBGPRINT("[WK_DrawSprite] ERROR: pRenderer_ == nullptr");
+        return;
+    }
+    
+    // 텍스처 유효성 검사
+    if (_pTexture == nullptr)
+    {
+        if (s_nDrawCount <= 3) DBGPRINT("[WK_DrawSprite] ERROR: _pTexture == nullptr");
+        return;
+    }
+    
+    if (s_nDrawCount <= 5)
+    {
+        DBGPRINT("[WK_DrawSprite] #%d: Dest(%d,%d,%d,%d) Src(%d,%d,%d,%d) TexSize=%dx%d Alpha=%.2f Blend=%d",
+            s_nDrawCount,
+            _rectDest.left, _rectDest.top, _rectDest.right, _rectDest.bottom,
+            _rectSrc.left, _rectSrc.top, _rectSrc.right, _rectSrc.bottom,
+            _nSrcFullWidth, _nSrcFullHeight, _fAlpha, _nBlendingType);
+    }
+    
+    // 정점 색상 계산 (COLORREF → D3DCOLOR)
+    // COLORREF: 0x00BBGGRR
+    // D3DCOLOR: 0xAARRGGBB
+    // 
+    // 주의: _nLighting은 조명 강도가 아니라 "가산 블렌딩 활성화" 플래그 (0 또는 1)
+    // RGB는 _colorVertex에서 직접 가져옴
+    BYTE byR_ = GetRValue(_colorVertex);
+    BYTE byG_ = GetGValue(_colorVertex);
+    BYTE byB_ = GetBValue(_colorVertex);
+    
+    // D3DCOLOR 조합 (ARGB) - 알파는 DrawCompat 내부에서 적용
+    DWORD dwColor_ = D3DCOLOR_XRGB(byR_, byG_, byB_);
+    
+    // DrawCompat 호출 - Wonderking D3D_DrawTexture와 동일한 파라미터
+    pRenderer_->DrawCompat(
+        _rectDest,
+        _pTexture,
         _rectSrc,
         _nSrcFullWidth,
         _nSrcFullHeight,
