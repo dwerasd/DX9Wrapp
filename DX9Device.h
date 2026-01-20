@@ -31,6 +31,13 @@
 //#define _USE_FAKE_VERTEX_
 namespace dx9
 {
+	/// @brief DX9 디바이스 모드 열거형
+	/// @details 2D 전용 또는 3D(2D GUI 포함) 모드 선택
+	enum _E_DX9_DEVICE_MODE_
+	{
+		DX9_DEVICE_MODE_2D = 0,		///< 순수 2D 게임용 (Z-Buffer 비활성화, 단순 블렌딩)
+		DX9_DEVICE_MODE_3D = 1		///< 3D 게임용 (Z-Buffer 활성화, 3D + 2D GUI)
+	};
 #if defined(LAYERED_WINDOW)
 	struct _IMAGE
 	{
@@ -48,6 +55,7 @@ namespace dx9
 		//, public _DX9_RENDER_STATES
 	{
 	private:
+		_E_DX9_DEVICE_MODE_ eDeviceMode;				///< 디바이스 모드 (2D/3D)
 		bool bWindowMode, bVerticalSync, bCursor;
 #if defined(_USE_FAKE_VERTEX_)
 		bool bUseFakeVertex;
@@ -99,6 +107,12 @@ namespace dx9
 
 		void InitDeviceDefault();
 
+		/// @brief 2D 전용 모드 초기화 (Z-Buffer 비활성화)
+		void Init2DMode();
+
+		/// @brief 3D 모드 초기화 (Z-Buffer 활성화, 3D 렌더 스테이트)
+		void Init3DMode();
+
 		UINT GetSamplerNumberToSaveIndex(UINT _nStage);	// sampler 번호 -> 내부 저장용 index 로 변환
 		UINT GetSaveIndexToSamplerNumber(UINT _nIndex);	//  내부 저장용 index -> sampler 번호 로 변환
 
@@ -109,7 +123,18 @@ namespace dx9
 		C_DX9_DEVICE(bool _bWindowMode = true, bool _bVerticalSync = false);
 		~C_DX9_DEVICE();
 
-		LPDIRECT3DDEVICE9 Init(HWND _hWnd, dk::DSIZE _sizeScreen);
+		/// @brief 디바이스 초기화
+		/// @param _hWnd 윈도우 핸들
+		/// @param _sizeScreen 화면 크기
+		/// @param _eMode 디바이스 모드 (기본값: DX9_DEVICE_MODE_2D - 하위 호환성 유지)
+		/// @return 생성된 Direct3D 디바이스 포인터
+		LPDIRECT3DDEVICE9 Init(HWND _hWnd, dk::DSIZE _sizeScreen, _E_DX9_DEVICE_MODE_ _eMode = DX9_DEVICE_MODE_2D);
+
+		/// @brief 현재 디바이스 모드 반환
+		_E_DX9_DEVICE_MODE_ GetDeviceMode() const { return eDeviceMode; }
+
+		/// @brief 3D 모드인지 확인
+		bool Is3DMode() const { return (DX9_DEVICE_MODE_3D == eDeviceMode); }
 #if defined(_USE_FAKE_VERTEX_)
 		void InitFakeVertex();
 		void SetScreenSize();

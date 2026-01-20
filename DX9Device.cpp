@@ -24,7 +24,8 @@ namespace dx9
 	_CUSTOM_VERTEX_FOR_2D gs_FakeVertexBuffer[4];
 #endif
 	C_DX9_DEVICE::C_DX9_DEVICE(bool _bWindowMode, bool _bVerticalSync)
-		: bWindowMode(_bWindowMode)
+		: eDeviceMode(DX9_DEVICE_MODE_2D)
+		, bWindowMode(_bWindowMode)
 		, bVerticalSync(_bVerticalSync)	// 프레임 출력할 수 있는만큼으로 제한
 		, bCursor(false)
 #if defined(_USE_FAKE_VERTEX_)
@@ -97,8 +98,9 @@ namespace dx9
 		}
 	}
 
-	LPDIRECT3DDEVICE9 C_DX9_DEVICE::Init(HWND _hWnd, dk::DSIZE _sizeScreen)
+	LPDIRECT3DDEVICE9 C_DX9_DEVICE::Init(HWND _hWnd, dk::DSIZE _sizeScreen, _E_DX9_DEVICE_MODE_ _eMode)
 	{
+		eDeviceMode = _eMode;
 		hWnd = _hWnd;
 		rectRender.Set(&_sizeScreen);
 		v2DisplaySize.Set((float)_sizeScreen.cx, (float)_sizeScreen.cy);
@@ -215,13 +217,103 @@ namespace dx9
 
 			InitDeviceDefault();
 
+			//////////////////////////////////////////////////////////////////////////
+			// 모드에 따른 초기화
+			if (DX9_DEVICE_MODE_3D == eDeviceMode)
+			{
+				// 3D 모드: Z-Buffer 활성화, 기본 렌더 스테이트 설정
+				Init3DMode();
+			}
+			else
+			{
+				// 2D 모드: 기존 동작 유지 (Z-Buffer 비활성화)
+				Init2DMode();
+			}
+			//////////////////////////////////////////////////////////////////////////
+
 			// 여기에서 폰트 텍스쳐를 생성하도록 하자.
 
 			//Begin2D();
 		} while (false);
 		nLastDeviceStatus = _DX9_DEVICE_OK;		// 디바이스가 사용 가능 상태
-		//DBGPRINT("C_DX9_DEVICE::Init(end)");
+		DBGPRINT("[결과] C_DX9_DEVICE::Init() 모드: %s", (DX9_DEVICE_MODE_3D == eDeviceMode) ? "3D" : "2D");
 		return(pDevice);
+	}
+
+	void C_DX9_DEVICE::Init2DMode()
+	{
+		// 2D 전용 모드 초기화
+		// Z-Buffer 비활성화
+		wrappSetRenderState(D3DRS_ZENABLE, FALSE);
+		wrappSetRenderState(D3DRS_ZWRITEENABLE, FALSE);
+
+		// 컬링 비활성화
+		wrappSetRenderState(D3DRS_CULLMODE, D3DCULL_NONE);
+
+		// 라이팅 비활성화
+		wrappSetRenderState(D3DRS_LIGHTING, FALSE);
+
+		// 알파 블렌딩 설정
+		wrappSetRenderState(D3DRS_ALPHABLENDENABLE, TRUE);
+		wrappSetRenderState(D3DRS_SRCBLEND, D3DBLEND_SRCALPHA);
+		wrappSetRenderState(D3DRS_DESTBLEND, D3DBLEND_INVSRCALPHA);
+
+		// 알파 테스트 설정
+		wrappSetRenderState(D3DRS_ALPHATESTENABLE, TRUE);
+		wrappSetRenderState(D3DRS_ALPHAREF, 0);
+		wrappSetRenderState(D3DRS_ALPHAFUNC, D3DCMP_NOTEQUAL);
+
+		DBGPRINT("[정보] Init2DMode() - 2D 전용 모드 초기화 완료");
+	}
+
+	void C_DX9_DEVICE::Init3DMode()
+	{
+		// 3D 게임용 모드 초기화 (2D GUI도 지원)
+		// Z-Buffer 활성화
+		wrappSetRenderState(D3DRS_ZENABLE, D3DZB_TRUE);
+		wrappSetRenderState(D3DRS_ZWRITEENABLE, TRUE);
+		wrappSetRenderState(D3DRS_ZFUNC, D3DCMP_LESSEQUAL);
+
+		// 기본 컬링 (시계방향 = 뒷면 제거)
+		wrappSetRenderState(D3DRS_CULLMODE, D3DCULL_CCW);
+
+		// 라이팅 (셰이더 사용 시 보통 비활성화)
+		wrappSetRenderState(D3DRS_LIGHTING, FALSE);
+
+		// 알파 블렌딩 (기본 비활성화, 필요 시 활성화)
+		wrappSetRenderState(D3DRS_ALPHABLENDENABLE, FALSE);
+		wrappSetRenderState(D3DRS_SRCBLEND, D3DBLEND_SRCALPHA);
+		wrappSetRenderState(D3DRS_DESTBLEND, D3DBLEND_INVSRCALPHA);
+
+		// 알파 테스트 비활성화 (셰이더에서 처리)
+		wrappSetRenderState(D3DRS_ALPHATESTENABLE, FALSE);
+
+		// 스펙큘러 하이라이트
+		wrappSetRenderState(D3DRS_SPECULARENABLE, FALSE);
+
+		// 안개 (기본 비활성화)
+		wrappSetRenderState(D3DRS_FOGENABLE, FALSE);
+
+		// 노멀라이즈 (스케일링된 오브젝트용)
+		wrappSetRenderState(D3DRS_NORMALIZENORMALS, TRUE);
+
+		// 텍스처 필터링 (Anisotropic)
+		const DWORD dwMaxAniso = d3dCaps.MaxAnisotropy > 0 ? d3dCaps.MaxAnisotropy : 1;
+		for (int i = 0; i < 8; ++i)
+		{
+			wrappSetSamplerState(i, D3DSAMP_MINFILTER, D3DTEXF_ANISOTROPIC);
+			wrappSetSamplerState(i, D3DSAMP_MAGFILTER, D3DTEXF_LINEAR);
+			wrappSetSamplerState(i, D3DSAMP_MIPFILTER, D3DTEXF_LINEAR);
+			wrappSetSamplerState(i, D3DSAMP_MAXANISOTROPY, dwMaxAniso);
+		}
+
+		// 디바이스 기능 로깅
+		DBGPRINT("[정보] Init3DMode() - 3D 모드 초기화 완료");
+		DBGPRINT("[정보] - VS 버전: %d.%d", D3DSHADER_VERSION_MAJOR(d3dCaps.VertexShaderVersion), D3DSHADER_VERSION_MINOR(d3dCaps.VertexShaderVersion));
+		DBGPRINT("[정보] - PS 버전: %d.%d", D3DSHADER_VERSION_MAJOR(d3dCaps.PixelShaderVersion), D3DSHADER_VERSION_MINOR(d3dCaps.PixelShaderVersion));
+		DBGPRINT("[정보] - 하드웨어 T&L: %s", QueryFeature(RQF_HARDWARETNL) ? "지원" : "미지원");
+		DBGPRINT("[정보] - 최대 텍스처 크기: %dx%d", d3dCaps.MaxTextureWidth, d3dCaps.MaxTextureHeight);
+		DBGPRINT("[정보] - 최대 Anisotropy: %d", d3dCaps.MaxAnisotropy);
 	}
 #if defined(_USE_FAKE_VERTEX_)
 	void C_DX9_DEVICE::InitFakeVertex()
