@@ -50,7 +50,7 @@ namespace dx9
 	void C_DX9_DEVICE::InitDeviceDefault()
 	{
 		currentVertexFormat = 0;
-		for (size_t i = 0; i < MAX_VERTEXSTREAM; i++)			// 4
+		for (size_t i = 0; i < MAX_VERTEXSTREAM; ++i)			// 4
 		{
 			currentVertexBuffer[i] = nullptr;
 			currentVertexOffset[i] = 0;
@@ -59,23 +59,23 @@ namespace dx9
 		currentIndexBuffer = nullptr;
 		currentInstanceCount = 1;
 
-		for (size_t i = 0; i < _countof(dwRenderState); i++)	// 256
+		for (size_t i = 0; i < _countof(dwRenderState); ++i)	// 256
 		{
 			dwRenderState[i] = 0;
 		}
-		for (size_t i = 0; i < _countof(dwSamplerState); i++)	// 16
+		for (size_t i = 0; i < _countof(dwSamplerState); ++i)	// 16
 		{
 			dwSamplerState[i] = 0;
 		}
-		for (size_t i = 0; i < _countof(currentTextures); i++)	// 16
+		for (size_t i = 0; i < _countof(currentTextures); ++i)	// 16
 		{
 			currentTextures[i] = nullptr;
 			currentTextureFilter[i] = _D3DTEXF_COUNT;
-			for (size_t j = 0; j < 3; j++)
+			for (size_t j = 0; j < 3; ++j)
 			{
 				currentTextureAddress[i][j] = RTADDRESS_WRAP;
 			}
-			for (size_t j = 0; j < _D3DTSS_MAX; j++)
+			for (size_t j = 0; j < _D3DTSS_MAX; ++j)
 			{
 				currentTextureStageSettings[i][j] = _D3DTSS_MAX;
 			}
@@ -88,11 +88,11 @@ namespace dx9
 
 	void C_DX9_DEVICE::ClearDX9States()
 	{
-		for (long i = 0; i < _countof(dwRenderState); i++)
+		for (long i = 0; i < _countof(dwRenderState); ++i)
 		{
 			dwRenderState[i] = 0xFFFFFFFF;
 		}
-		for (long i = 0; i < _countof(dwSamplerState); i++)
+		for (long i = 0; i < _countof(dwSamplerState); ++i)
 		{
 			dwSamplerState[i] = 0xFFFFFFFF;
 		}
@@ -944,7 +944,7 @@ namespace dx9
 				}
 				else
 				{
-					for (long i = 0; i < imgBack.nHeight; i++)
+					for (long i = 0; i < imgBack.nHeight; ++i)
 					{
 						memcpy(&pDest[destPitch * i], &pSrc[srcPitch * i], destPitch);
 					}

@@ -23,7 +23,7 @@
 #pragma comment(lib, "dinput8")
 
 
-#include <mmsystem.h>
+#include <mmSystem.h>
 #pragma comment(lib, "winmm")
 
 #define DIRECTSOUND_VERSION 0x800

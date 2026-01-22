@@ -506,9 +506,9 @@ namespace dx9
 	{
 		_DMATRIX9 ret;
 
-		for (int i = 0;i < 4; i++)
+		for (int i = 0;i < 4; ++i)
 		{
-			for (int j = 0;j < 4; j++)
+			for (int j = 0;j < 4; ++j)
 			{
 				ret.m[j][i] = m[i][j];
 			}

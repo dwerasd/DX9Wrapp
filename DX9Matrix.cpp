@@ -26,7 +26,7 @@ namespace dx9
 
 	_DMATRIX9::_DMATRIX9(const float(*f)[4])
 	{
-		for (int i = 0; i < 4; i++)
+		for (int i = 0; i < 4; ++i)
 		{
 			memcpy(&_11 + 4 * i, f[i], sizeof(float) * 4);
 		}
@@ -97,9 +97,9 @@ namespace dx9
 	*/
 	inline bool _DMATRIX9::operator==(const _DMATRIX9& other)
 	{
-		for (int i = 0; i < 4; i++)
+		for (int i = 0; i < 4; ++i)
 		{
-			for (int j = 0; j < 4; j++)
+			for (int j = 0; j < 4; ++j)
 			{
 				if (_DMATRIX9::m[i][j] != other.m[i][j])
 				{
@@ -242,9 +242,9 @@ namespace dx9
 	_DMATRIX9 _DMATRIX9::operator*(float f)
 	{
 		_DMATRIX9 mat;
-		for (int i = 0;i < 4;i++)
+		for (int i = 0;i < 4; ++i)
 		{
-			for (int j = 0;j < 4;j++)
+			for (int j = 0;j < 4; ++j)
 			{
 				mat.m[i][j] = m[i][j] * f;
 			}
