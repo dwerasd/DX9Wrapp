@@ -59,11 +59,11 @@ namespace dx9
 	}
 	void C_DX9_DEVICEEX::ClearDX9States()
 	{
-		for (long i = 0; i < _countof(dwRenderState); i++)
+		for (long i = 0; i < _countof(dwRenderState); ++i)
 		{
 			dwRenderState[i] = 0;
 		}
-		for (long i = 0; i < _countof(dwSamplerState); i++)
+		for (long i = 0; i < _countof(dwSamplerState); ++i)
 		{
 			dwSamplerState[i] = 0;
 		}
@@ -544,7 +544,7 @@ namespace dx9
 				}
 				else
 				{
-					for (long i = 0; i < imgBack.nHeight; i++)
+					for (long i = 0; i < imgBack.nHeight; ++i)
 					{
 						memcpy(&pDest[destPitch * i], &pSrc[srcPitch * i], destPitch);
 					}
