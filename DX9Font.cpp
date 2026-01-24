@@ -682,8 +682,8 @@ void C_DX9_FONT::Destroy()
 	}
 
 	// 글리프 캐시 해제
-	for (auto& pair : m_mapGlyphs)
-		delete pair.second;
+	for (auto& pair_ : m_mapGlyphs)
+		delete pair_.second;
 	m_mapGlyphs.clear();
 }
 
