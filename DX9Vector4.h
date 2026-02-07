@@ -44,8 +44,8 @@ namespace dx9
 		float Dot(const _DVECTOR4& _other) const noexcept { return x * _other.x + y * _other.y + z * _other.z + w * _other.w; }
 
 		float DotProduct(_DVECTOR4* other);
-		_DVECTOR4* CrossProduct(_DVECTOR4* pOutput, _DVECTOR4* p);
-		_DVECTOR4* GetInterpolated(_DVECTOR4* pOutput, _DVECTOR4* other, float d);
+		_DVECTOR4* CrossProduct(_DVECTOR4* _pOutput, _DVECTOR4* _p);
+		_DVECTOR4* GetInterpolated(_DVECTOR4* _pOutput, _DVECTOR4* _other, float _d);
 
 		// 선형 보간 (Lerp) - 정적 함수 버전
 		// @param _from: 시작 벡터

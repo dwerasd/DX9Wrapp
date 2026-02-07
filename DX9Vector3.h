@@ -49,7 +49,7 @@ namespace dx9
 		bool operator==(const _DVECTOR3& other) { return IsEqual(other); }
 		bool operator!=(const _DVECTOR3& other) const { return other.x != x || other.y != y || other.z != z; }
 
-		_DVECTOR3 operator = (_DVECTOR3 other);
+		_DVECTOR3 operator = (const _DVECTOR3& other);
 		_DVECTOR3 operator = (_DVECTOR3 *other);
 		_DVECTOR3 operator = (_DVECTOR2 &other);
 		_DVECTOR3 operator = (const _DVECTOR2 &other);

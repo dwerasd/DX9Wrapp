@@ -1,6 +1,8 @@
 ﻿#pragma once
 
 
+#include <unordered_map>
+
 #include <DarkCore/DDef.h>
 #include <DarkCore/DTypes.h>
 #include <DarkCore/DColor.h>

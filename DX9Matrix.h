@@ -20,15 +20,15 @@ namespace dx9
 		_DMATRIX9(const float* f);
 		_DMATRIX9(const float(*f)[4]);
 		_DMATRIX9(
-			float _11, float _12, float _13, float _14,
-			float _21, float _22, float _23, float _24,
-			float _31, float _32, float _33, float _34,
-			float _41, float _42, float _43, float _44
+			float _f11, float _f12, float _f13, float _f14,
+			float _f21, float _f22, float _f23, float _f24,
+			float _f31, float _f32, float _f33, float _f34,
+			float _f41, float _f42, float _f43, float _f44
 		);
 
-		_DMATRIX9 operator = (D3DXMATRIX other);
+		_DMATRIX9 operator = (const D3DXMATRIX& other);
 		_DMATRIX9 operator = (D3DXMATRIX* other);
-		_DMATRIX9 operator = (_DMATRIX9 other);
+		_DMATRIX9 operator = (const _DMATRIX9& other);
 		_DMATRIX9 operator = (_DMATRIX9* other);
 		//_DMATRIX9 operator=(const _DMATRIX9& other);
 
@@ -37,8 +37,8 @@ namespace dx9
 		_DMATRIX9& operator*=(const _DMATRIX9& other);
 		_DMATRIX9 operator*(const _DMATRIX9& other);
 		_DMATRIX9 operator*(float f);
-		_DMATRIX9 operator-(const _DMATRIX9& other);	// 090716, OZ
-		_DMATRIX9 operator+(const _DMATRIX9& other);	// 090716, OZ
+		_DMATRIX9 operator-(const _DMATRIX9& mat);	// 090716, OZ
+		_DMATRIX9 operator+(const _DMATRIX9& mat);	// 090716, OZ
 
 		// transform, mvector * mmatrix 로 대체가능.
 		//friend _DVECTOR3 operator * (const _DVECTOR3& v, const _DMATRIX9& tm);

@@ -51,22 +51,22 @@ namespace dx9
 		*/
 	}
 
-	_DMATRIX9 _DMATRIX9::operator = (const D3DXMATRIX other)
+	_DMATRIX9 _DMATRIX9::operator = (const D3DXMATRIX& other)
 	{
 		Set(other);
 		return *this;
 	}
-	_DMATRIX9 _DMATRIX9::operator = (D3DXMATRIX *other)
+	_DMATRIX9 _DMATRIX9::operator = (D3DXMATRIX* other)
 	{
 		Set((_DMATRIX9 *)other);
 		return *this;
 	}
-	_DMATRIX9 _DMATRIX9::operator = (const _DMATRIX9 other)
+	_DMATRIX9 _DMATRIX9::operator = (const _DMATRIX9& other)
 	{
 		Set(other);
 		return *this;
 	}
-	_DMATRIX9 _DMATRIX9::operator = (_DMATRIX9 *other)
+	_DMATRIX9 _DMATRIX9::operator = (_DMATRIX9* other)
 	{
 		Set(other);
 		return *this;
@@ -115,11 +115,11 @@ namespace dx9
 		return !(*this == other);
 	}
 
-	inline void _DMATRIX9::MultiplyTo(const _DMATRIX9& other, _DMATRIX9& mOut) const // out = this * other;
+	inline void _DMATRIX9::MultiplyTo(const _DMATRIX9& other, _DMATRIX9& out) const // out = this * other;
 	{
 #if defined(_WIN64)
 		const _DMATRIX9& m1 = *this, & m2 = other;
-#define CALCCOMPONENT(i,j) mOut.m[i][j] = m1.m[i][0]*m2.m[0][j] + m1.m[i][1]*m2.m[1][j] + m1.m[i][2]*m2.m[2][j] + m1.m[i][3]*m2.m[3][j];
+#define CALCCOMPONENT(i,j) out.m[i][j] = m1.m[i][0]*m2.m[0][j] + m1.m[i][1]*m2.m[1][j] + m1.m[i][2]*m2.m[2][j] + m1.m[i][3]*m2.m[3][j];
 		CALCCOMPONENT(0, 0) CALCCOMPONENT(0, 1) CALCCOMPONENT(0, 2) CALCCOMPONENT(0, 3)
 			CALCCOMPONENT(1, 0) CALCCOMPONENT(1, 1) CALCCOMPONENT(1, 2) CALCCOMPONENT(1, 3)
 			CALCCOMPONENT(2, 0) CALCCOMPONENT(2, 1) CALCCOMPONENT(2, 2) CALCCOMPONENT(2, 3)
@@ -389,9 +389,9 @@ namespace dx9
 	_DVECTOR3 _DMATRIX9::GetScale() const noexcept
 	{
 		// 각 축 벡터의 길이가 스케일
-		float fScaleX_ = sqrtf(_11 * _11 + _12 * _12 + _13 * _13);
-		float fScaleY_ = sqrtf(_21 * _21 + _22 * _22 + _23 * _23);
-		float fScaleZ_ = sqrtf(_31 * _31 + _32 * _32 + _33 * _33);
+		const float fScaleX_ = sqrtf(_11 * _11 + _12 * _12 + _13 * _13);
+		const float fScaleY_ = sqrtf(_21 * _21 + _22 * _22 + _23 * _23);
+		const float fScaleZ_ = sqrtf(_31 * _31 + _32 * _32 + _33 * _33);
 		return _DVECTOR3(fScaleX_, fScaleY_, fScaleZ_);
 	}
 
@@ -400,17 +400,17 @@ namespace dx9
 	// @return: 회전 벡터 (x, y, z 각 축의 회전)
 	_DVECTOR3 _DMATRIX9::GetRotationRadians() const noexcept
 	{
-		_DVECTOR3 v3Scale_ = GetScale();
+		const _DVECTOR3 v3Scale_ = GetScale();
 
 		// 스케일 제거
-		float f11_ = _11 / v3Scale_.x;
-		float f21_ = _21 / v3Scale_.y;
-		float f31_ = _31 / v3Scale_.z;
-		float f32_ = _32 / v3Scale_.z;
-		float f33_ = _33 / v3Scale_.z;
+		const float f11_ = _11 / v3Scale_.x;
+		const float f21_ = _21 / v3Scale_.y;
+		const float f31_ = _31 / v3Scale_.z;
+		const float f32_ = _32 / v3Scale_.z;
+		const float f33_ = _33 / v3Scale_.z;
 
 		// ZYX 오일러 각도 추출
-		float fRotY_ = asinf(-f31_);
+		const float fRotY_ = asinf(-f31_);
 		float fRotX_ = 0.0f;
 		float fRotZ_ = 0.0f;
 

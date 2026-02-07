@@ -68,7 +68,7 @@ namespace dx9
 				float x, y, z, rhw;
 			};
 			float pos[4];
-			dx9::_DVECTOR4 v4;
+			dx9::_DVECTOR4 v4{};
 		};
 		DWORD dwColor{ 0xFFFFFFFF };
 
@@ -90,7 +90,7 @@ namespace dx9
 				float u, v;
 			};
 			float uv[2];
-			dx9::_DVECTOR2 v2;
+			dx9::_DVECTOR2 v2{};
 		};
 
 		_VERTEX_TEX_RHW();
@@ -133,7 +133,7 @@ namespace dx9
 				float x, y, z;
 			};
 			float pos[3];
-			dx9::_DVECTOR3 v3;
+			dx9::_DVECTOR3 v3{};
 		};
 		DWORD dwColor;
 
@@ -155,7 +155,7 @@ namespace dx9
 				float u, v;
 			};
 			float uv[2];
-			dx9::_DVECTOR2 v2;
+			dx9::_DVECTOR2 v2{};
 		};
 
 		_VERTEX_TEX();
@@ -181,7 +181,7 @@ namespace dx9
 
 	struct _INDEX_LINE
 	{
-		WORD _0, _1;
+		WORD _0{}, _1{};
 
 		_INDEX_LINE();
 		_INDEX_LINE(WORD _n0, WORD _n1);
@@ -190,7 +190,7 @@ namespace dx9
 	struct _INDEX_TRIANGLE
 		: public _INDEX_LINE
 	{
-		WORD _2;
+		WORD _2{};
 
 		_INDEX_TRIANGLE();
 		_INDEX_TRIANGLE(WORD _n0, WORD _n1, WORD _n2);

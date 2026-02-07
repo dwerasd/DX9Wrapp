@@ -37,7 +37,7 @@ namespace dx9
 		if (0 < nWidth)
 		{
 			DBGPRINT("_DX9_TEXTURE::Create() %i / %i / %i / %i", nWidth, nHeight, nMipLevels, d3dFormat);
-			HRESULT hResult = pDevice->CreateTexture(
+			const HRESULT hResult = pDevice->CreateTexture(
 				nWidth
 				, nHeight
 				, nMipLevels
@@ -45,7 +45,7 @@ namespace dx9
 				, d3dFormat
 				, d3dPool
 				, &pTexture
-				, 0
+				, nullptr
 			);
 			if (SUCCEEDED(hResult))
 			{
@@ -91,7 +91,7 @@ namespace dx9
 				, D3DX_DEFAULT
 				, D3DCOLOR_ARGB(255, 0, 0, 0)
 				, &d3dImageInfo
-				, NULL
+				, nullptr
 				, &pTexture
 			);
 		}
@@ -133,7 +133,7 @@ namespace dx9
 
 			std::wstringstream sStream;
 			sStream << L"Failed to load texture: " << _tszPath;
-			MessageBoxW(0, sStream.str().c_str(), L"_DX9_TEXTURE::LoadTexture( ... )", 0);
+			MessageBoxW(nullptr, sStream.str().c_str(), L"_DX9_TEXTURE::LoadTexture( ... )", 0);
 		}
 		return(false);
 	}
@@ -186,7 +186,7 @@ namespace dx9
 					, D3DX_DEFAULT
 					, D3DCOLOR_ARGB(255, 0, 0, 0)
 					, &d3dImageInfo
-					, NULL
+					, nullptr
 					, &pTexture
 				);
 			}
@@ -228,7 +228,7 @@ namespace dx9
 				DBGPRINT("pTexture: %x", pTexture);
 				std::wstringstream sStream;
 				sStream << L"Failed to load texture: " << wstrPath.c_str();
-				MessageBoxW(0, sStream.str().c_str(), L"_DX9_TEXTURE::LoadTextureEx( ... )", 0);
+				MessageBoxW(nullptr, sStream.str().c_str(), L"_DX9_TEXTURE::LoadTextureEx( ... )", 0);
 			}
 		}
 		return(false);
@@ -294,7 +294,7 @@ namespace dx9
 						, d3dFormat
 						, d3dPool
 						, &pTexture
-						, 0
+						, nullptr
 					);
 					//DBGPRINT("텍스쳐 생성했다");
 				}

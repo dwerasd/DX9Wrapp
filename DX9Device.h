@@ -102,7 +102,7 @@ namespace dx9
 
 		unsigned char bytAlphaBlend;
 
-		long CheckResourceFormat(_D3DFORMAT fmt, D3DRESOURCETYPE resType, DWORD dwUsage);
+		long CheckResourceFormat(_D3DFORMAT _fmt, D3DRESOURCETYPE _resType, DWORD _dwUsage);
 		void ClearDX9States();
 
 		void InitDeviceDefault();
@@ -153,7 +153,7 @@ namespace dx9
 #endif
 		void Destroy();
 
-		void InitPresentParameters(_DX9_PRESENT_PARAMETERS* d3dpp);
+		void InitPresentParameters(_DX9_PRESENT_PARAMETERS* _d3dpp);
 
 		_DEVICE_STATUS_ GetDeviceStatus();
 
@@ -163,7 +163,7 @@ namespace dx9
 		void OnLostDevice();
 		void RestoreDevice();
 
-		bool QueryFeature(_DX9_QUERY_FEATURE_TYPE_ feature);
+		bool QueryFeature(_DX9_QUERY_FEATURE_TYPE_ _feature);
 
 #if defined(LAYERED_WINDOW)
 		_IMAGE imgBack;
@@ -179,10 +179,10 @@ namespace dx9
 		void RedrawLayeredWindow16();
 #endif
 		// 버텍스버퍼에서 구조체 사이즈는 LostDevice 때문에 복구용으로 저장한다
-		_DX9_VERTEX_BUFFER* wrappCreateVertexBuffer(UINT _nStructSize, DWORD _nCreateSize, DWORD _dwFVF = 0, DWORD _dwFlags = 0, LPVOID _pData = nullptr);
+		_DX9_VERTEX_BUFFER* wrappCreateVertexBuffer(UINT _nStructSize, DWORD _nCreateCount, DWORD _dwFVF = 0, DWORD _dwFlags = 0, LPVOID _pData = nullptr);
 		void DeleteVertexBuffer(_DX9_VERTEX_BUFFER* _pDX9VertexBuffer);
 
-		_DX9_INDEX_BUFFER* wrappCreateIndexBuffer(UINT _nIndices, DWORD _dwFlags = 0, LPVOID _data = nullptr);
+		_DX9_INDEX_BUFFER* wrappCreateIndexBuffer(UINT _nCreateCount, DWORD _dwFlags = 0, LPVOID _pData = nullptr);
 		void DeleteIndexBuffer(_DX9_INDEX_BUFFER* _pDX9IndexBuffer);
 
 		_DX9_TEXTURE* wrappCreateTexture(DWORD _nWidth = 0, DWORD _nHeight = 0, _D3DFORMAT _d3dFormat = D3DFMT_A8R8G8B8, DWORD _dwFlags = 0);
@@ -197,12 +197,12 @@ namespace dx9
 		void wrappClear(DWORD _dwColor = DARK_COL32_BLACK, DWORD _dwFlags = D3DCLEAR_TARGET | D3DCLEAR_ZBUFFER, float _fZ = 1.0f, DWORD _dwStencil = 0, DWORD _dwIndex = 0);
 		HRESULT wrappPresent(HWND hDestWindowOverride = 0, LPRECT pDst = nullptr, LPRECT pSrc = nullptr, RGNDATA* pDirtyRegion = nullptr);
 
-		void wrappSetTexture(int nStage, _DX9_TEXTURE* pTexture);
+		void wrappSetTexture(int nStage, _DX9_TEXTURE* _pDX9Texture);
 
 		HRESULT wrappDrawIndexedPrimitive(D3DPRIMITIVETYPE _PrimitiveType, INT _nBaseVertexIndex, UINT _nMinVertexIndex, UINT _nNumVertices, UINT _nStartIndex, UINT _nPrimCount);
 
 		void wrappSetRenderState(D3DRENDERSTATETYPE _State, DWORD _Value);
-		void wrappSetSamplerState(DWORD Sampler, D3DSAMPLERSTATETYPE Type, DWORD Value);
+		void wrappSetSamplerState(DWORD _Sampler, D3DSAMPLERSTATETYPE _Type, DWORD _Value);
 
 		HRESULT wrappTestCooperativeLevel() { return(pDevice->TestCooperativeLevel()); }
 
@@ -210,12 +210,12 @@ namespace dx9
 		void wrappSetAlphaFunc(_D3D_CMP_FUNC Func);
 
 		void wrappSetFVF(DWORD _fvf);
-		void wrappSetTextureStageState(int nStage, _TEXTURE_STAGE_STATE_TYPE_ nStageStateType, unsigned int value);
+		void wrappSetTextureStageState(int _nStage, _TEXTURE_STAGE_STATE_TYPE_ _nStageStateType, unsigned int _value);
 
 		void ShaderOff();
 
 		void wrappSetVertexBuffer(_DX9_VERTEX_BUFFER* _pDX9VertexBuffer, int _nStream = 0, UINT _nOffset = 0);
-		void wrappSetIndexBuffer(_DX9_INDEX_BUFFER* pDX9IndexBuffer);
+		void wrappSetIndexBuffer(_DX9_INDEX_BUFFER* _pDX9IndexBuffer);
 
 		void wrappSetVertexShaderConstantF(UINT _StartRegister, const float* _pConstantData, UINT _Vector4fCount);
 
@@ -223,9 +223,9 @@ namespace dx9
 		void wrappSetViewport(DWORD _x, DWORD _y, DWORD _nWidth, DWORD _nHeight, float _fMinZ = 0.0f, float _fMaxZ = 1.0f);
 		dx9::LPDVIEWPORT9 GetViewport();
 
-		void wrappSetTextureFilter(int nSampler, _TEXTURE_FILTER_TYPE type);
+		void wrappSetTextureFilter(int _nSampler, _TEXTURE_FILTER_TYPE _type);
 
-		void wrappSetTransform(_SETTREANSFORM_TYPE type, const _DMATRIX9* matrix);
+		void wrappSetTransform(_SETTREANSFORM_TYPE _type, const _DMATRIX9* _matrix);
 		_DMATRIX9 wrappGetTransform(_SETTREANSFORM_TYPE type) const;
 
 		LPDIRECT3DDEVICE9 GetDevice() { return(pDevice); }

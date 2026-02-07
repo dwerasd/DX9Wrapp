@@ -41,10 +41,10 @@ namespace dx9
 	// @return: 정규화된 자기 자신의 포인터
 	_DVECTOR4* _DVECTOR4::Normalize() noexcept
 	{
-		float len_ = Length();
+		const float len_ = Length();
 		if (len_ > 0.0f)
 		{
-			float invLen_ = 1.0f / len_;
+			const float invLen_ = 1.0f / len_;
 			x *= invLen_;
 			y *= invLen_;
 			z *= invLen_;
@@ -57,10 +57,10 @@ namespace dx9
 	// @return: 정규화된 새 벡터
 	_DVECTOR4 _DVECTOR4::GetNormalized() const noexcept
 	{
-		float len_ = Length();
+		const float len_ = Length();
 		if (len_ > 0.0f)
 		{
-			float invLen_ = 1.0f / len_;
+			const float invLen_ = 1.0f / len_;
 			return _DVECTOR4(x * invLen_, y * invLen_, z * invLen_, w * invLen_);
 		}
 		return _DVECTOR4(0.0f, 0.0f, 0.0f, 0.0f);
@@ -107,7 +107,7 @@ namespace dx9
 
 	_DVECTOR4 *_DVECTOR4::GetInterpolated(_DVECTOR4 *_pOutput, _DVECTOR4 *_other, float _d)
 	{
-		float inv = 1.0f - _d;
+		const float inv = 1.0f - _d;
 		_pOutput->Set(
 			_other->x*inv + x * _d
 			, _other->y*inv + y * _d

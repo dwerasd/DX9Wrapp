@@ -51,7 +51,7 @@ namespace dx9
 	{
 		Set(_v2);
 	}
-	_DVECTOR3 _DVECTOR3::operator = (_DVECTOR3 other)
+	_DVECTOR3 _DVECTOR3::operator = (const _DVECTOR3& other)
 	{
 		Set(other);
 		return *this;
@@ -109,41 +109,41 @@ namespace dx9
 
 	float _DVECTOR3::DistanceTo(_DVECTOR3 *tar)
 	{
-		float x1 = tar->x - x;
-		float y1 = tar->y - y;
-		float z1 = tar->z - z;
+		const float x1 = tar->x - x;
+		const float y1 = tar->y - y;
+		const float z1 = tar->z - z;
 
 		return sqrtf(x1*x1 + y1*y1 + z1*z1);
 	}
 
 	float _DVECTOR3::XYDistanceTo(_DVECTOR3 *tar)
 	{
-		float x1 = tar->x - x;
-		float y1 = tar->y - y;
+		const float x1 = tar->x - x;
+		const float y1 = tar->y - y;
 
 		return sqrtf(x1*x1 + y1*y1);
 	}
 
 	float _DVECTOR3::XYDistanceToSq(_DVECTOR3 *tar)
 	{
-		float x1 = tar->x - x;
-		float y1 = tar->y - y;
+		const float x1 = tar->x - x;
+		const float y1 = tar->y - y;
 
 		return (x1*x1 + y1*y1);
 	}
 
 	float _DVECTOR3::ZDistanceTo(_DVECTOR3 *tar)
 	{
-		float z1 = tar->z - z;
+		const float z1 = tar->z - z;
 
 		return z1;
 	}
 
 	float _DVECTOR3::DistanceToSq(_DVECTOR3 *tar)
 	{
-		float x1 = tar->x - x;
-		float y1 = tar->y - y;
-		float z1 = tar->z - z;
+		const float x1 = tar->x - x;
+		const float y1 = tar->y - y;
+		const float z1 = tar->z - z;
 
 		return (x1*x1 + y1*y1 + z1*z1);
 	}
@@ -170,12 +170,12 @@ namespace dx9
 
 	_DVECTOR3 *_DVECTOR3::Normalize()
 	{
-		float scale = (float)Length();
+		float scale = Length();
 
 		if (scale == 0 || ToleranceEqual(scale, 0.0f, .001f))
 			return this; // can't normalize astd::std::vector of zero magnitude
 
-		scale = (float)1.0f / scale;
+		scale = 1.0f / scale;
 		x *= scale;
 		y *= scale;
 		z *= scale;
@@ -185,7 +185,7 @@ namespace dx9
 	{
 		float fx = LengthSq();
 		// fast invert-sqrtf code
-		float vhalf = 0.5f*fx;
+		const float vhalf = 0.5f*fx;
 		int i = *(int*)&fx;
 		i = 0x5f3759df - (i >> 1);
 		fx = *(float*)&i;
@@ -199,7 +199,7 @@ namespace dx9
 
 	_DVECTOR3 *_DVECTOR3::GetInterpolated(_DVECTOR3 *pOutput, _DVECTOR3 *other, float d)
 	{
-		float inv = 1.0f - d;
+		const float inv = 1.0f - d;
 		pOutput->Set(other->x*inv + x*d, other->y*inv + y*d, other->z*inv + z*d);
 		return(pOutput);
 	}
@@ -238,10 +238,10 @@ namespace dx9
 		b->z = 0.0f;
 		b->Normalize();
 
-		float aa = GetAngleXY();
+		const float aa = GetAngleXY();
 
-		float _x = (float)(b->x*cosf(aa) + b->y*sinf(aa));
-		float _y = (float)(b->x*(-sinf(aa)) + b->y*cosf(aa));
+		const float _x = (float)(b->x*cosf(aa) + b->y*sinf(aa));
+		const float _y = (float)(b->x*(-sinf(aa)) + b->y*cosf(aa));
 
 		_DVECTOR3 ret = _DVECTOR3(_x, _y, 0.0f);
 		return ret.GetAngleXY();
@@ -269,10 +269,10 @@ namespace dx9
 	// @return: 정규화된 새 벡터
 	_DVECTOR3 _DVECTOR3::GetNormalized() const noexcept
 	{
-		float len_ = Length();
+		const float len_ = Length();
 		if (len_ > 0.0f)
 		{
-			float invLen_ = 1.0f / len_;
+			const float invLen_ = 1.0f / len_;
 			return _DVECTOR3(x * invLen_, y * invLen_, z * invLen_);
 		}
 		return _DVECTOR3(0.0f, 0.0f, 0.0f);
@@ -297,7 +297,7 @@ namespace dx9
 	// @return: 반사된 벡터
 	_DVECTOR3 _DVECTOR3::Reflect(const _DVECTOR3& _normal) const noexcept
 	{
-		float d_ = 2.0f * Dot(_normal);
+		const float d_ = 2.0f * Dot(_normal);
 		return _DVECTOR3(x - d_ * _normal.x, y - d_ * _normal.y, z - d_ * _normal.z);
 	}
 
@@ -306,10 +306,10 @@ namespace dx9
 	// @return: _other에 투영된 벡터
 	_DVECTOR3 _DVECTOR3::Project(const _DVECTOR3& _other) const noexcept
 	{
-		float lenSq_ = _other.LengthSq();
+		const float lenSq_ = _other.LengthSq();
 		if (lenSq_ > 0.0f)
 		{
-			float scale_ = Dot(_other) / lenSq_;
+			const float scale_ = Dot(_other) / lenSq_;
 			return _DVECTOR3(_other.x * scale_, _other.y * scale_, _other.z * scale_);
 		}
 		return _DVECTOR3(0.0f, 0.0f, 0.0f);

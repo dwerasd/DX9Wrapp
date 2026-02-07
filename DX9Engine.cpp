@@ -582,7 +582,7 @@ namespace dx9
 		m_d3dpp.BackBufferHeight = m_config.nScreenHeight;
 
 		// 디바이스 리셋
-		HRESULT hr = m_pDevice->Reset(&m_d3dpp);
+		const HRESULT hr = m_pDevice->Reset(&m_d3dpp);
 		if (FAILED(hr))
 		{
 			return false;
@@ -658,7 +658,7 @@ namespace dx9
 			return _DX9_DEVICE_DESTROY;
 		}
 
-		HRESULT hr = m_pDevice->TestCooperativeLevel();
+		const HRESULT hr = m_pDevice->TestCooperativeLevel();
 
 		switch (hr)
 		{
@@ -697,7 +697,7 @@ namespace dx9
 		}
 
 		// 디바이스 상태 확인
-		_DEVICE_STATUS_ status_ = QueryStatus();
+		const _DEVICE_STATUS_ status_ = QueryStatus();
 		if (status_ == _DX9_DEVICE_LOST)
 		{
 			m_bDeviceLost = true;
@@ -711,7 +711,7 @@ namespace dx9
 			}
 		}
 
-		HRESULT hr = m_pDevice->BeginScene();
+		const HRESULT hr = m_pDevice->BeginScene();
 		if (SUCCEEDED(hr))
 		{
 			m_bInScene = true;
@@ -1208,7 +1208,7 @@ namespace dx9
 			return;
 		}
 
-		UINT nIndex = GetSamplerToIndex(_nStage);
+		const UINT nIndex = GetSamplerToIndex(_nStage);
 		if (nIndex >= MAX_IMAGE_UNITS)
 		{
 			return;
@@ -1231,7 +1231,7 @@ namespace dx9
 
 	_DX9_TEXTURE* C_DX9_ENGINE::GetTexture(UINT _nStage) const
 	{
-		UINT nIndex = const_cast<C_DX9_ENGINE*>(this)->GetSamplerToIndex(_nStage);
+		const UINT nIndex = const_cast<C_DX9_ENGINE*>(this)->GetSamplerToIndex(_nStage);
 		if (nIndex >= MAX_IMAGE_UNITS)
 		{
 			return nullptr;
@@ -1298,7 +1298,7 @@ namespace dx9
 			return;
 		}
 
-		UINT nIndex = GetSamplerToIndex(_nSampler);
+		const UINT nIndex = GetSamplerToIndex(_nSampler);
 		if (nIndex >= MAX_IMAGE_UNITS)
 		{
 			return;
@@ -1341,7 +1341,7 @@ namespace dx9
 			return;
 		}
 
-		UINT nIndex = GetSamplerToIndex(_nSampler);
+		const UINT nIndex = GetSamplerToIndex(_nSampler);
 		if (nIndex >= MAX_IMAGE_UNITS)
 		{
 			return;
@@ -1405,7 +1405,7 @@ namespace dx9
 			return;
 		}
 
-		UINT nIndex = GetSamplerToIndex(_nStage);
+		const UINT nIndex = GetSamplerToIndex(_nStage);
 		if (nIndex >= MAX_IMAGE_UNITS)
 		{
 			return;
@@ -1426,7 +1426,7 @@ namespace dx9
 			return;
 		}
 
-		UINT nIndex = GetSamplerToIndex(_nSampler);
+		const UINT nIndex = GetSamplerToIndex(_nSampler);
 		if (nIndex >= MAX_IMAGE_UNITS)
 		{
 			return;
@@ -1450,7 +1450,7 @@ namespace dx9
 			return;
 		}
 
-		int nTypeIndex = static_cast<int>(_eType);
+		const int nTypeIndex = static_cast<int>(_eType);
 		if (nTypeIndex >= 0 && nTypeIndex < static_cast<int>(E_TRANSFORM_TYPE::MAX))
 		{
 			// 행렬 비교 후 변경된 경우만 D3D API 호출
@@ -1464,7 +1464,7 @@ namespace dx9
 
 	_DMATRIX9 C_DX9_ENGINE::GetTransform(E_TRANSFORM_TYPE _eType) const
 	{
-		int nTypeIndex = static_cast<int>(_eType);
+		const int nTypeIndex = static_cast<int>(_eType);
 		if (nTypeIndex >= 0 && nTypeIndex < static_cast<int>(E_TRANSFORM_TYPE::MAX))
 		{
 			return m_matCurrentTransform[nTypeIndex];
@@ -2190,7 +2190,7 @@ namespace dx9
 			return false;
 		}
 
-		HRESULT hr = m_pDevice->DrawPrimitive(
+		const HRESULT hr = m_pDevice->DrawPrimitive(
 			s_d3dPrimitiveTypes[static_cast<int>(_eType)],
 			_nStart,
 			_nPrimitiveCount
@@ -2238,7 +2238,7 @@ namespace dx9
 			return false;
 		}
 
-		HRESULT hr = m_pDevice->DrawPrimitiveUP(
+		const HRESULT hr = m_pDevice->DrawPrimitiveUP(
 			s_d3dPrimitiveTypes[static_cast<int>(_eType)],
 			_nPrimitiveCount,
 			_pVertexData,

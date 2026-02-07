@@ -1,7 +1,6 @@
 ﻿#include "framework.h"
 #include "CImGui.h"
-#include <unordered_map>
-#include <string>
+
 
 
 extern IMGUI_IMPL_API LRESULT ImGui_ImplWin32_WndProcHandler(HWND hWnd, UINT msg, WPARAM wParam, LPARAM lParam);
