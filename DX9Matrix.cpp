@@ -115,11 +115,11 @@ namespace dx9
 		return !(*this == other);
 	}
 
-	inline void _DMATRIX9::MultiplyTo(const _DMATRIX9& other, _DMATRIX9& out) const // out = this * other;
+	inline void _DMATRIX9::MultiplyTo(const _DMATRIX9& other, _DMATRIX9& _out) const // out = this * other;
 	{
 #if defined(_WIN64)
 		const _DMATRIX9& m1 = *this, & m2 = other;
-#define CALCCOMPONENT(i,j) out.m[i][j] = m1.m[i][0]*m2.m[0][j] + m1.m[i][1]*m2.m[1][j] + m1.m[i][2]*m2.m[2][j] + m1.m[i][3]*m2.m[3][j];
+#define CALCCOMPONENT(i,j) _out.m[i][j] = m1.m[i][0]*m2.m[0][j] + m1.m[i][1]*m2.m[1][j] + m1.m[i][2]*m2.m[2][j] + m1.m[i][3]*m2.m[3][j];
 		CALCCOMPONENT(0, 0) CALCCOMPONENT(0, 1) CALCCOMPONENT(0, 2) CALCCOMPONENT(0, 3)
 			CALCCOMPONENT(1, 0) CALCCOMPONENT(1, 1) CALCCOMPONENT(1, 2) CALCCOMPONENT(1, 3)
 			CALCCOMPONENT(2, 0) CALCCOMPONENT(2, 1) CALCCOMPONENT(2, 2) CALCCOMPONENT(2, 3)
@@ -127,7 +127,7 @@ namespace dx9
 #else
 		__asm
 		{
-			mov		   eax, mOut		// dst
+			mov		   eax, _out		// dst
 			mov		   ecx, other	// src1
 			mov		   edx, this		// src2
 

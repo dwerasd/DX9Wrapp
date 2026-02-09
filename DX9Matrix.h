@@ -58,13 +58,13 @@ namespace dx9
 
 		void TransformVect(_DVECTOR3& vect) const;
 		void TransformVectHomogeneous(_DVECTOR3& vect) const;
-		void TransformVect(const _DVECTOR3& in, _DVECTOR3& out) const;
-		void TransformVect(const _DVECTOR3& in, _DVECTOR4& out) const;
+		void TransformVect(const _DVECTOR3& in, _DVECTOR3& _out) const;
+		void TransformVect(const _DVECTOR3& in, _DVECTOR4& _out) const;
 		void TransformNormal(_DVECTOR3& vect) const;
-		void TransformNormal(const _DVECTOR3& in, _DVECTOR3& out) const;
+		void TransformNormal(const _DVECTOR3& in, _DVECTOR3& _out) const;
 		//void TransformPlane(const MPlane& in, MPlane& out) const;
 
-		void MultiplyTo(const _DMATRIX9& other, _DMATRIX9& out) const; // out = this * other;
+		void MultiplyTo(const _DMATRIX9& other, _DMATRIX9& _out) const; // out = this * other;
 
 		void MakeZero();
 		void MakeIdentity();
@@ -251,20 +251,20 @@ namespace dx9
 
 	}
 
-	inline void _DMATRIX9::TransformVect(const _DVECTOR3& in, _DVECTOR3& out) const
+	inline void _DMATRIX9::TransformVect(const _DVECTOR3& in, _DVECTOR3& _out) const
 	{
 		//assert(&in!=&out); // 이경우 에러납니다.
-		out.x = in.x * _11 + in.y * _21 + in.z * _31 + _41;
-		out.y = in.x * _12 + in.y * _22 + in.z * _32 + _42;
-		out.z = in.x * _13 + in.y * _23 + in.z * _33 + _43;
+		_out.x = in.x * _11 + in.y * _21 + in.z * _31 + _41;
+		_out.y = in.x * _12 + in.y * _22 + in.z * _32 + _42;
+		_out.z = in.x * _13 + in.y * _23 + in.z * _33 + _43;
 	}
 
-	inline void _DMATRIX9::TransformVect(const _DVECTOR3& in, _DVECTOR4& out) const
+	inline void _DMATRIX9::TransformVect(const _DVECTOR3& in, _DVECTOR4& _out) const
 	{
-		out.x = in.x * _11 + in.y * _21 + in.z * _31 + _41;
-		out.y = in.x * _12 + in.y * _22 + in.z * _32 + _42;
-		out.z = in.x * _13 + in.y * _23 + in.z * _33 + _43;
-		out.w = in.x * _14 + in.y * _24 + in.z * _34 + _44;
+		_out.x = in.x * _11 + in.y * _21 + in.z * _31 + _41;
+		_out.y = in.x * _12 + in.y * _22 + in.z * _32 + _42;
+		_out.z = in.x * _13 + in.y * _23 + in.z * _33 + _43;
+		_out.w = in.x * _14 + in.y * _24 + in.z * _34 + _44;
 	}
 
 	inline void _DMATRIX9::TransformNormal(_DVECTOR3& vect) const
@@ -281,11 +281,11 @@ namespace dx9
 
 	}
 
-	inline void _DMATRIX9::TransformNormal(const _DVECTOR3& in, _DVECTOR3& out) const
+	inline void _DMATRIX9::TransformNormal(const _DVECTOR3& in, _DVECTOR3& _out) const
 	{
-		out.x = in.x * _11 + in.y * _21 + in.z * _31;
-		out.y = in.x * _12 + in.y * _22 + in.z * _32;
-		out.z = in.x * _13 + in.y * _23 + in.z * _33;
+		_out.x = in.x * _11 + in.y * _21 + in.z * _31;
+		_out.y = in.x * _12 + in.y * _22 + in.z * _32;
+		_out.z = in.x * _13 + in.y * _23 + in.z * _33;
 	}
 
 
