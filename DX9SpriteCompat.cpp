@@ -225,18 +225,10 @@ namespace dx9
 		//         _nSrcFullWidth, _nSrcFullHeight, _fAlpha, _nBlendingType);
 		// }
 
-		// 정점 색상 계산 (COLORREF → D3DCOLOR)
-		// COLORREF: 0x00BBGGRR
-		// D3DCOLOR: 0xAARRGGBB
-		// 
-		// 주의: _nLighting은 조명 강도가 아니라 "가산 블렌딩 활성화" 플래그 (0 또는 1)
-		// RGB는 _colorVertex에서 직접 가져옴
-		const BYTE byR_ = GetRValue(_colorVertex);
-		const BYTE byG_ = GetGValue(_colorVertex);
-		const BYTE byB_ = GetBValue(_colorVertex);
-
-		// D3DCOLOR 조합 (ARGB) - 알파는 DrawCompat 내부에서 적용
-		const DWORD dwColor_ = D3DCOLOR_XRGB(byR_, byG_, byB_);
+		// 색상 처리: 호출자(Wonderking)가 COLORREF 타입으로 선언했지만
+		// 실제로는 D3DCOLOR(ARGB: 0xAARRGGBB)를 직접 전달함
+		// 변환 불필요 — 그대로 전달 (알파는 DrawCompat 내부에서 _fAlpha로 덮어씀)
+		const DWORD dwColor_ = static_cast<DWORD>(_colorVertex);
 
 		// DrawCompat 호출 - Wonderking D3D_DrawTexture와 동일한 파라미터
 		pRenderer_->DrawCompat(

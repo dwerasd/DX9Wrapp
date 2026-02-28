@@ -597,14 +597,17 @@ namespace dx9
 		};
 
 		// 회전 적용 및 위치 이동
+		// D3D9 반픽셀 보정: 픽셀 중심이 (0.5, 0.5)이므로 -0.5 오프셋 적용
+		// 원본 렌더러는 프로젝션 행렬에 D3DXMatrixTranslation(-0.5, -0.5, 0)을 적용하여 보정
+		// XYZRHW는 프로젝션을 거치지 않으므로 직접 보정 필요
 		for (int i = 0; i < 4; ++i)
 		{
 			float fX = fCorners[i][0];
 			float fY = fCorners[i][1];
 
-			// 회전
-			_pOutVertices[i].x = fCenterX + fX * fCos - fY * fSin;
-			_pOutVertices[i].y = fCenterY + fX * fSin + fY * fCos;
+			// 회전 + 반픽셀 보정
+			_pOutVertices[i].x = fCenterX + fX * fCos - fY * fSin - 0.5f;
+			_pOutVertices[i].y = fCenterY + fX * fSin + fY * fCos - 0.5f;
 			_pOutVertices[i].z = 0.0f;
 			_pOutVertices[i].rhw = 1.0f;  // D3DFVF_XYZRHW 필수 - 변환된 좌표 표시
 			_pOutVertices[i].dwColor = _instance.dwColor;
