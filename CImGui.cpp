@@ -280,7 +280,7 @@ typedef std::unordered_map<std::string, std::string> UMAP_UTF8_STRINGS;
 UMAP_UTF8_STRINGS umapUtf8Strings;
 LPCSTR toUtf8(LPCSTR _pszData)
 {
-	UMAP_UTF8_STRINGS::iterator itr = umapUtf8Strings.find(_pszData);
+	const UMAP_UTF8_STRINGS::iterator itr = umapUtf8Strings.find(_pszData);
 	if (umapUtf8Strings.end() != itr)
 	{	// 약간의 퍼포먼스를 위해 찾은걸 리턴한다.
 		return(itr->second.c_str());
