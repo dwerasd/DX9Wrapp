@@ -46,6 +46,11 @@ void C_IMGUI::Init_ImGui(HWND _hWnd, LPDIRECT3DDEVICE9 _pDevice, bool _bVertical
 	ImPlot::CreateContext();
 	ImGui::StyleColorsDark();
 
+	// Docking / Multi-Viewport ConfigFlags 는 호출자(앱) 가 결정하도록 위임.
+	// 라이브러리에서 강제 ON 하면 multi-viewport 비용을 모든 의존 프로젝트가
+	// 떠안게 되므로 (DX9 secondary swapchain present 등 상시 비용),
+	// 앱이 INI/메뉴 토글로 제어하게 둔다.
+
 	ImGui_ImplWin32_Init(this->hWnd);
 	ImGui_ImplDX9_Init(this->pDevice);
 
@@ -168,8 +173,18 @@ void C_IMGUI::Draw_ImGui()
 			//
 			ImGui::Render();
 			ImGui_ImplDX9_RenderDrawData(ImGui::GetDrawData());
-			// 
+			//
 			this->pDevice->EndScene();
+		}
+		// Multi-Viewport — secondary OS 창들 렌더 + Present (메인 viewport Present 전후 무관, 가이드는 메인 Present 전 권장).
+		// ViewportsEnable 안 켜진 경우엔 no-op 에 가깝지만 분기로 명시.
+		{
+			const ImGuiIO& ioRender = ImGui::GetIO();
+			if (ioRender.ConfigFlags & ImGuiConfigFlags_ViewportsEnable)
+			{
+				ImGui::UpdatePlatformWindows();
+				ImGui::RenderPlatformWindowsDefault();
+			}
 		}
 		hResult = this->pDevice->Present(nullptr, nullptr, 0, nullptr);
 		if (0 > hResult)	// Present 가 실패했을 경우
