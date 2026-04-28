@@ -291,97 +291,47 @@ bool C_IMGUI::WndProc_ImGui(HWND _hWnd, UINT _nMessage, WPARAM _wParam, LPARAM _
 	return(false);
 }
 
-typedef std::unordered_map<std::string, std::string> UMAP_UTF8_STRINGS;
-UMAP_UTF8_STRINGS umapUtf8Strings;
+// ============================================================================
+// toUtf8: narrow / wide 문자열을 UTF-8 char* 로 변환 (캐시 wrapper).
+// ============================================================================
+// 캐시 키는 *내용 기반* (std::string / std::wstring) 만 사용한다.
+//
+// 과거 wide 버전에 포인터 기반 (const wchar_t*) 캐시가 있었으나 다음 trap 들로
+// 제거됨:
+//   1) stale 데이터: 같은 stack buffer (예: wchar_t wszBuf_[N] + swprintf) 에
+//      매 프레임 다른 내용이 쓰이면 포인터 hit 으로 첫 프레임 결과가 영구 반환.
+//   2) dangling pointer: 임시 std::wstring 의 c_str() 등 곧 해제될 주소가 키로
+//      등록되면 캐시는 invalid pointer 를 영구 보유. 동일 주소 재할당 시
+//      잘못된 hit + 메모리 오염.
+//
+// 비용: GUI 한글 라벨은 보통 16 wchar 이내라 std::wstring SBO 안에 들어가
+// heap alloc 없이 키 생성 가능. 포인터 O(1) 대비 손실은 측정 불가 수준.
+//
+// thread_local: 메인 스레드 전용 가정 + 멀티스레드 안전.
+// ============================================================================
+
 LPCSTR toUtf8(LPCSTR _pszData)
 {
-	const UMAP_UTF8_STRINGS::iterator itr = umapUtf8Strings.find(_pszData);
-	if (umapUtf8Strings.end() != itr)
-	{	// 약간의 퍼포먼스를 위해 찾은걸 리턴한다.
-		return(itr->second.c_str());
-	}
-	else
-	{
-		umapUtf8Strings[_pszData] = dk::AnsiToUtf8(_pszData);
-	}
-	return(umapUtf8Strings[_pszData].c_str());
+	static thread_local std::unordered_map<std::string, std::string> g_umapNarrow;
+	if (_pszData == nullptr || *_pszData == '\0') { return ""; }
+
+	const std::string strKey_(_pszData);
+	const std::unordered_map<std::string, std::string>::iterator it_ = g_umapNarrow.find(strKey_);
+	if (it_ != g_umapNarrow.end()) { return it_->second.c_str(); }
+
+	return g_umapNarrow.emplace(strKey_, dk::AnsiToUtf8(_pszData)).first->second.c_str();
 }
 
-// typedef std::unordered_map<std::wstring, std::string> UMAP_UTF8_WSTRINGS;
-// UMAP_UTF8_WSTRINGS umapUtf8WStrings;
-// LPCSTR toUtf8(LPCWSTR _pwszData)
-// {
-// 	UMAP_UTF8_WSTRINGS::iterator itr = umapUtf8WStrings.find(_pwszData);
-// 	if (umapUtf8WStrings.end() != itr)
-// 	{	// 약간의 퍼포먼스를 위해 찾은걸 리턴한다.
-// 		return(itr->second.c_str());
-// 	}
-// 	else
-// 	{
-// 		umapUtf8WStrings[_pwszData] = dk::Utf16ToUtf8(_pwszData);
-// 	}
-// 	return(umapUtf8WStrings[_pwszData].c_str());
-// }
-
-// ============================================================================
-// toUtf8: ImGui용 UTF-8 변환 함수 (하이브리드 캐싱)
-// ============================================================================
-// 성능 최적화:
-// 1. 포인터 기반 캐시 (g_umapPtrCache): 리터럴 문자열용 O(1) 조회
-//    - 리터럴은 항상 동일한 주소를 가지므로 포인터 비교로 즉시 찾음
-// 2. 문자열 기반 캐시 (g_umapStrCache): 동적 문자열용
-//    - 동일 내용이지만 다른 주소를 가진 문자열도 캐싱
-// 3. thread_local: dk::Utf16ToUtf8 내부 버퍼와 일관성 유지 + thread-safe
-// ============================================================================
-
-// 포인터 기반 캐시 (리터럴용 - O(1) 조회)
-static thread_local std::unordered_map<const wchar_t*, std::string> g_umapPtrCache;
-// 문자열 기반 캐시 (동적 문자열용)
-static thread_local std::unordered_map<std::wstring, std::string> g_umapStrCache;
-
-/// <summary>
-/// 유니코드(UTF-16) 문자열을 UTF-8로 변환하여 반환
-/// 하이브리드 캐싱: 포인터 캐시 → 문자열 캐시 → 변환
-/// </summary>
-/// <param name="_pwszData">유니코드 문자열</param>
-/// <returns>UTF-8로 변환된 문자열 (캐시에서 관리, 호출자가 해제 금지)</returns>
-/// <example>
-/// // 리터럴 (포인터 캐시 히트)
-/// ImGui::Text(toUtf8(L"안녕하세요"));
-/// 
-/// // 동적 문자열 (문자열 캐시 히트)
-/// std::wstring strName = L"종목: " + code;
-/// ImGui::Text(toUtf8(strName.c_str()));
-/// </example>
 LPCSTR toUtf8(LPCWSTR _pwszData)
 {
-	if (!_pwszData || !*_pwszData) {
-		return "";
-	}
-	
-	// 1단계: 포인터 캐시 조회 (리터럴용 - O(1))
-	const auto itPtr = g_umapPtrCache.find(_pwszData);
-	if (itPtr != g_umapPtrCache.end()) {
-		return itPtr->second.c_str();
-	}
-	
-	// 2단계: 문자열 캐시 조회 (동적 문자열용)
-	const std::wstring strKey(_pwszData);
-	const auto itStr = g_umapStrCache.find(strKey);
-	if (itStr != g_umapStrCache.end()) {
-		// 포인터 캐시에도 등록 (다음 호출 시 O(1))
-		g_umapPtrCache[_pwszData] = itStr->second;
-		return itStr->second.c_str();
-	}
-	
-	// 3단계: 변환 수행
-	const std::string strUtf8 = dk::Utf16ToUtf8(_pwszData);
-	
-	// 양쪽 캐시에 저장
-	g_umapStrCache[strKey] = strUtf8;
-	g_umapPtrCache[_pwszData] = strUtf8;
-	
-	return g_umapStrCache[strKey].c_str();
+	static thread_local std::unordered_map<std::wstring, std::string> g_umapWide;
+	if (_pwszData == nullptr || *_pwszData == L'\0') { return ""; }
+
+	const std::wstring strKey_(_pwszData);
+	const std::unordered_map<std::wstring, std::string>::iterator it_ = g_umapWide.find(strKey_);
+	if (it_ != g_umapWide.end()) { return it_->second.c_str(); }
+
+	return g_umapWide.emplace(strKey_, dk::Utf16ToUtf8(_pwszData)).first->second.c_str();
 }
 
 bool bInit = false;
