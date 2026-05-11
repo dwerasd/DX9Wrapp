@@ -78,6 +78,9 @@
     <ClInclude Include="DX9Font.h">
       <Filter>유틸리티\헤더 파일</Filter>
     </ClInclude>
+    <ClInclude Include="DX9Font_DW.h">
+      <Filter>유틸리티\헤더 파일</Filter>
+    </ClInclude>
     <ClInclude Include="DX9Engine.h">
       <Filter>본체\헤더 파일</Filter>
     </ClInclude>
@@ -132,6 +135,9 @@
       <Filter>디바이스</Filter>
     </ClCompile>
     <ClCompile Include="DX9Font.cpp">
+      <Filter>유틸리티\소스 파일</Filter>
+    </ClCompile>
+    <ClCompile Include="DX9Font_DW.cpp">
       <Filter>유틸리티\소스 파일</Filter>
     </ClCompile>
     <ClCompile Include="DX9Engine.cpp">
