@@ -1,6 +1,6 @@
 # DX9Wrapp
 
-DirectX 9 그래픽스 고성능 추상화 레이어 래퍼 라이브러리. 
+DirectX 9 그래픽스 추상화 레이어 래퍼 라이브러리.
 
 ## 개요
 
@@ -9,15 +9,17 @@ DirectX 9 그래픽스 고성능 추상화 레이어 래퍼 라이브러리.
 ## 주요 기능
 
 ### 디바이스 관리
-- **C_DX9_DEVICE** / **C_DX9_DEVICEEX** - Direct3D9(Ex) 디바이스 래핑
+- **C_DX9_DEVICE** - 현재 프로젝트에 포함된 Direct3D9 디바이스 래퍼
+- **C_DX9_DEVICEEX** - D3D9Ex 실험 소스만 존재하며 현재 프로젝트 빌드에는 포함되지 않음
 - 2D 모드(Z-Buffer 비활성)와 3D 모드 지원
 - Lost Device 자동 복구
 - 렌더 상태 캐싱을 통한 API 호출 최소화
 
 ### 2D 스프라이트 렌더링
-- **C_DX9_SPRITE_RENDERER** - 배칭 기반 고성능 스프라이트 렌더러
-- 최대 4096개 스프라이트 배치 처리
-- 7가지 블렌딩 모드 (Alpha, Additive, Normal, Cloud, Shadow, Opacity, Copy)
+- **C_DX9_SPRITE_RENDERER** - 일반 `Draw()` 경로의 배칭 스프라이트 렌더러
+- 배치당 최대 4,096개 스프라이트 처리
+- 호환 `DrawCompat()` 경로는 호출마다 즉시 플러시
+- 9가지 블렌딩 모드 (Alpha, Additive, Normal, Cloud, Shadow, Opacity, Clear, Copy, Alpha Additive)
 - 회전, 스케일링, 플립, 색상 변조 지원
 - 반픽셀 보정
 
@@ -40,7 +42,7 @@ DirectX 9 그래픽스 고성능 추상화 레이어 래퍼 라이브러리.
 ### 리소스 관리
 - 텍스처 로딩 (PNG, JPG, DDS 등)
 - 정점/인덱스 버퍼 관리
-- Dynamic/Static 버퍼 자동 선택
+- 호출자가 지정한 usage flag에 따른 Dynamic/Static 버퍼 관리
 
 ### ImGui 통합
 - Dear ImGui + ImPlot 지원
@@ -49,7 +51,8 @@ DirectX 9 그래픽스 고성능 추상화 레이어 래퍼 라이브러리.
 ## 빌드
 
 ### 요구사항
-- Visual Studio 2019 이상 (v145 툴셋)
+- `DX9Wrapp.vcxproj`: v145 툴셋
+- `DX9Wrapp_2019.vcxproj`: Debug/Release Win32와 Debug x64는 v142, Release x64는 v141
 - Windows 10 SDK
 - vcpkg MSBuild 통합과 `directxsdk` 포트
   - Win32: `directxsdk:x86-windows`, `directxsdk:x86-windows-static`
@@ -99,4 +102,4 @@ DX9Wrapp/
 
 ## 네임스페이스
 
-모든 타입과 함수는 `dx9` 네임스페이스에 정의된다.
+핵심 DX9 래퍼 타입과 함수는 `dx9` 네임스페이스에 정의된다. ImGui 통합 클래스 `C_IMGUI` 등 일부 심볼은 전역 네임스페이스에 있다.
