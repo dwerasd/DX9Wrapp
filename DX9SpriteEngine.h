@@ -116,99 +116,38 @@ struct _ENGINE_STATS
 //============================================================================
 struct _RENDER_STATE_BACKUP
 {
-	//------------------------------------------------------------------------
-	// 렌더 스테이트
-	//------------------------------------------------------------------------
-	DWORD dwAlphaBlendEnable;        ///< D3DRS_ALPHABLENDENABLE
-	DWORD dwSrcBlend;                ///< D3DRS_SRCBLEND
-	DWORD dwDestBlend;               ///< D3DRS_DESTBLEND
-	DWORD dwAlphaTestEnable;         ///< D3DRS_ALPHATESTENABLE
-	DWORD dwAlphaRef;                ///< D3DRS_ALPHAREF
-	DWORD dwAlphaFunc;               ///< D3DRS_ALPHAFUNC
-	DWORD dwCullMode;                ///< D3DRS_CULLMODE
-	DWORD dwLighting;                ///< D3DRS_LIGHTING
-	DWORD dwZEnable;                 ///< D3DRS_ZENABLE
-	DWORD dwZWriteEnable;            ///< D3DRS_ZWRITEENABLE
-	DWORD dwFogEnable;               ///< D3DRS_FOGENABLE
-	DWORD dwStencilEnable;           ///< D3DRS_STENCILENABLE
-	
-	//------------------------------------------------------------------------
-	// 텍스처 스테이지 상태 (Stage 0)
-	//------------------------------------------------------------------------
-	DWORD dwColorOp;                 ///< D3DTSS_COLOROP
-	DWORD dwColorArg1;               ///< D3DTSS_COLORARG1
-	DWORD dwColorArg2;               ///< D3DTSS_COLORARG2
-	DWORD dwAlphaOp;                 ///< D3DTSS_ALPHAOP
-	DWORD dwAlphaArg1;               ///< D3DTSS_ALPHAARG1
-	DWORD dwAlphaArg2;               ///< D3DTSS_ALPHAARG2
-	
-	//------------------------------------------------------------------------
-	// 샘플러 상태 (Stage 0)
-	//------------------------------------------------------------------------
-	DWORD dwMagFilter;               ///< D3DSAMP_MAGFILTER
-	DWORD dwMinFilter;               ///< D3DSAMP_MINFILTER
-	DWORD dwMipFilter;               ///< D3DSAMP_MIPFILTER
-	DWORD dwAddressU;                ///< D3DSAMP_ADDRESSU
-	DWORD dwAddressV;                ///< D3DSAMP_ADDRESSV
-	
-	//------------------------------------------------------------------------
-	// 변환 행렬
-	//------------------------------------------------------------------------
-	D3DMATRIX matWorld;              ///< D3DTS_WORLD
-	D3DMATRIX matView;               ///< D3DTS_VIEW
-	D3DMATRIX matProjection;         ///< D3DTS_PROJECTION
-	
-	//------------------------------------------------------------------------
-	// 기타
-	//------------------------------------------------------------------------
-	LPDIRECT3DTEXTURE9 pTexture0;    ///< 텍스처 0
-	LPDIRECT3DVERTEXSHADER9 pVS;     ///< 버텍스 셰이더
-	LPDIRECT3DPIXELSHADER9 pPS;      ///< 픽셀 셰이더
-	DWORD dwFVF;                     ///< FVF
-	LPDIRECT3DVERTEXBUFFER9 pVB;     ///< 버텍스 버퍼
-	UINT nVBOffset;                  ///< 버텍스 버퍼 오프셋
-	UINT nVBStride;                  ///< 버텍스 버퍼 스트라이드
-	LPDIRECT3DINDEXBUFFER9 pIB;      ///< 인덱스 버퍼
-	
-	bool bValid;                     ///< 유효한 백업 데이터인지
-	
+	LPDIRECT3DSTATEBLOCK9 pStateBlock;             ///< 모든 파이프라인 상태
+	std::vector<LPDIRECT3DSURFACE9> vRenderTargets; ///< 상태 블록에 포함되지 않는 렌더 타겟
+	LPDIRECT3DSURFACE9 pDepthStencil;               ///< 상태 블록에 포함되지 않는 깊이/스텐실
+	bool bValid;                                    ///< 유효한 백업 데이터인지
+
 	_RENDER_STATE_BACKUP()
-		: dwAlphaBlendEnable(0)
-		, dwSrcBlend(0)
-		, dwDestBlend(0)
-		, dwAlphaTestEnable(0)
-		, dwAlphaRef(0)
-		, dwAlphaFunc(0)
-		, dwCullMode(0)
-		, dwLighting(0)
-		, dwZEnable(0)
-		, dwZWriteEnable(0)
-		, dwFogEnable(0)
-		, dwStencilEnable(0)
-		, dwColorOp(0)
-		, dwColorArg1(0)
-		, dwColorArg2(0)
-		, dwAlphaOp(0)
-		, dwAlphaArg1(0)
-		, dwAlphaArg2(0)
-		, dwMagFilter(0)
-		, dwMinFilter(0)
-		, dwMipFilter(0)
-		, dwAddressU(0)
-		, dwAddressV(0)
-		, pTexture0(nullptr)
-		, pVS(nullptr)
-		, pPS(nullptr)
-		, dwFVF(0)
-		, pVB(nullptr)
-		, nVBOffset(0)
-		, nVBStride(0)
-		, pIB(nullptr)
+		: pStateBlock(nullptr)
+		, pDepthStencil(nullptr)
 		, bValid(false)
+	{}
+
+	~_RENDER_STATE_BACKUP() { Clear(); }
+
+	void Clear()
 	{
-		ZeroMemory(&matWorld, sizeof(D3DMATRIX));
-		ZeroMemory(&matView, sizeof(D3DMATRIX));
-		ZeroMemory(&matProjection, sizeof(D3DMATRIX));
+		if (pStateBlock != nullptr)
+		{
+			pStateBlock->Release();
+			pStateBlock = nullptr;
+		}
+		for (LPDIRECT3DSURFACE9 pSurface : vRenderTargets)
+		{
+			if (pSurface != nullptr)
+				pSurface->Release();
+		}
+		vRenderTargets.clear();
+		if (pDepthStencil != nullptr)
+		{
+			pDepthStencil->Release();
+			pDepthStencil = nullptr;
+		}
+		bValid = false;
 	}
 };
 

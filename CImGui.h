@@ -33,7 +33,10 @@ protected:
 	bool bVerticalSync{ false }, bResetDevice{ false };	// 수직동기화
 
 	HWND hWnd{ nullptr };
+	LPDIRECT3D9 pDirect3D{ nullptr };
 	LPDIRECT3DDEVICE9 pDevice{ nullptr };
+	bool bOwnDevice{ false };
+	bool bImGuiInitialized{ false };
 	D3DPRESENT_PARAMETERS g_d3dpp{};
 	dk::_DCOLOR dkClearColor{};
 

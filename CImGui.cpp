@@ -13,7 +13,7 @@ C_IMGUI::C_IMGUI(bool _bVerticalSync)
 
 C_IMGUI::~C_IMGUI()
 {
-
+	Destroy_ImGui();
 }
 
 void C_IMGUI::Init_ImGui(HWND _hWnd, LPDIRECT3DDEVICE9 _pDevice, bool _bVerticalSync)
@@ -22,8 +22,8 @@ void C_IMGUI::Init_ImGui(HWND _hWnd, LPDIRECT3DDEVICE9 _pDevice, bool _bVertical
 	this->bVerticalSync = _bVerticalSync;
 	if (!_pDevice)
 	{
-		const LPDIRECT3D9 g_pD3D = Direct3DCreate9(D3D_SDK_VERSION);
-		if (g_pD3D)
+		pDirect3D = Direct3DCreate9(D3D_SDK_VERSION);
+		if (pDirect3D)
 		{
 			// Create the D3DDevice
 			ZeroMemory(&this->g_d3dpp, sizeof(this->g_d3dpp));
@@ -34,13 +34,24 @@ void C_IMGUI::Init_ImGui(HWND _hWnd, LPDIRECT3DDEVICE9 _pDevice, bool _bVertical
 			this->g_d3dpp.AutoDepthStencilFormat = D3DFMT_D16;
 			this->g_d3dpp.PresentationInterval = this->bVerticalSync ? D3DPRESENT_INTERVAL_ONE : D3DPRESENT_INTERVAL_IMMEDIATE;           // Present with vsync
 			//g_d3dpp.PresentationInterval = D3DPRESENT_INTERVAL_IMMEDIATE;   // Present without vsync, maximum unthrottled framerate
-			if (0 < g_pD3D->CreateDevice(D3DADAPTER_DEFAULT, D3DDEVTYPE_HAL, hWnd, D3DCREATE_HARDWARE_VERTEXPROCESSING, &this->g_d3dpp, &this->pDevice))
+			const HRESULT hr = pDirect3D->CreateDevice(D3DADAPTER_DEFAULT, D3DDEVTYPE_HAL, hWnd, D3DCREATE_HARDWARE_VERTEXPROCESSING, &this->g_d3dpp, &this->pDevice);
+			if (FAILED(hr))
 			{
-				DBGPRINT("[ImGui] C_IMGUI::C_IMGUI() - CreateDevice 실패");
+				DBGPRINT("[ImGui] C_IMGUI::Init_ImGui() - CreateDevice 실패 (0x%08X)", hr);
+				pDirect3D->Release();
+				pDirect3D = nullptr;
+				return;
 			}
+			bOwnDevice = true;
 		}
+		else
+			return;
 	}
-	else { pDevice = _pDevice; }
+	else
+	{
+		pDevice = _pDevice;
+		bOwnDevice = false;
+	}
 
 	ImGui::CreateContext();
 	ImPlot::CreateContext();
@@ -53,6 +64,7 @@ void C_IMGUI::Init_ImGui(HWND _hWnd, LPDIRECT3DDEVICE9 _pDevice, bool _bVertical
 
 	ImGui_ImplWin32_Init(this->hWnd);
 	ImGui_ImplDX9_Init(this->pDevice);
+	bImGuiInitialized = true;
 
 	// 기본 폰트
 	const ImGuiIO& io = ImGui::GetIO();
@@ -205,10 +217,23 @@ void C_IMGUI::Draw_ImGui()
 
 void C_IMGUI::Destroy_ImGui()
 {
-	ImGui_ImplDX9_Shutdown();
-	ImGui_ImplWin32_Shutdown();
-	ImPlot::DestroyContext();
-	ImGui::DestroyContext();
+	if (bImGuiInitialized)
+	{
+		ImGui_ImplDX9_Shutdown();
+		ImGui_ImplWin32_Shutdown();
+		ImPlot::DestroyContext();
+		ImGui::DestroyContext();
+		bImGuiInitialized = false;
+	}
+	if (bOwnDevice && pDevice != nullptr)
+		pDevice->Release();
+	pDevice = nullptr;
+	bOwnDevice = false;
+	if (pDirect3D != nullptr)
+	{
+		pDirect3D->Release();
+		pDirect3D = nullptr;
+	}
 }
 
 void C_IMGUI::Clear(DWORD _dwColor, DWORD _dwFlags, float _fZ, DWORD _dwStencil, DWORD _dwIndex)

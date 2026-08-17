@@ -152,7 +152,7 @@ namespace dx9
 			return;
 
 		// 버퍼 재생성
-		Initialize(m_pDevice, m_nScreenWidth, m_nScreenHeight);
+		Initialize(m_pDevice, m_nScreenWidth, m_nScreenHeight, m_bExternalDevice);
 	}
 
 	//------------------------------------------------------------------------
@@ -426,8 +426,9 @@ namespace dx9
 		memcpy(pVertexData, vertices, VERTICES_PER_SPRITE * sizeof(_SPRITE_VERTEX));
 		m_pVertexBuffer->Unlock();
 
-		// 렌더링
-		m_pDevice->BeginScene();
+		// 외부 디바이스는 호스트가 BeginScene/EndScene을 소유한다.
+		if (!m_bExternalDevice && FAILED(m_pDevice->BeginScene()))
+			return;
 
 		//--------------------------------------------------------------------
 		// 버텍스/픽셀 셰이더 비활성화 (고정 함수 파이프라인 사용)
@@ -488,7 +489,8 @@ namespace dx9
 			2                       // PrimitiveCount (삼각형 2개)
 		);
 
-		m_pDevice->EndScene();
+		if (!m_bExternalDevice)
+			m_pDevice->EndScene();
 		++m_nDrawCallCount;
 	}
 
@@ -748,8 +750,9 @@ namespace dx9
 		memcpy(pVertexData, m_vVertices.data(), m_vVertices.size() * sizeof(_SPRITE_VERTEX));
 		m_pVertexBuffer->Unlock();
 
-		// 렌더링 상태 설정 (BeginScene/EndScene 항상 호출 - Present 직전이므로 OK)
-		m_pDevice->BeginScene();
+		// 외부 디바이스는 호스트가 BeginScene/EndScene을 소유한다.
+		if (!m_bExternalDevice && FAILED(m_pDevice->BeginScene()))
+			return;
 
 		//--------------------------------------------------------------------
 		// 버텍스/픽셀 셰이더 비활성화 (고정 함수 파이프라인 사용)
@@ -835,7 +838,8 @@ namespace dx9
 			++m_nDrawCallCount;
 		}
 
-		m_pDevice->EndScene();
+		if (!m_bExternalDevice)
+			m_pDevice->EndScene();
 	}
 
 } // namespace dx9

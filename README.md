@@ -51,8 +51,20 @@ DirectX 9 그래픽스 고성능 추상화 레이어 래퍼 라이브러리.
 ### 요구사항
 - Visual Studio 2019 이상 (v145 툴셋)
 - Windows 10 SDK
-- DirectX SDK (June 2010)
-- [DarkCore](../DarkCore) 라이브러리
+- vcpkg MSBuild 통합과 `directxsdk` 포트
+  - Win32: `directxsdk:x86-windows`, `directxsdk:x86-windows-static`
+  - x64: `directxsdk:x64-windows`, `directxsdk:x64-windows-static`
+- 비공개 [DarkCore](../DarkCore) 라이브러리를 DX9Wrapp과 같은 부모 디렉터리에 배치
+
+요구 디렉터리 배치는 다음과 같다.
+
+```
+<솔루션 루트>/
+├── DarkCore/
+└── DX9Wrapp/
+```
+
+프로젝트는 라이브러리군의 공통 주입점으로 `$(SolutionDir)`를 사용한다. 현재 DX9Wrapp 소스가 솔루션 제공 헤더를 직접 참조하지는 않지만, 지원 빌드 경로는 소비 프로젝트의 솔루션에 포함해 빌드하는 방식이며 `.vcxproj` 직접 빌드는 지원 대상이 아니다.
 
 ### 구성
 | 구성 | 설명 |

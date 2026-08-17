@@ -440,7 +440,7 @@ namespace dx9
 		default:
 			break;
 		}
-		return false;
+		return bResult;
 	}
 
 #if defined(LAYERED_WINDOW)

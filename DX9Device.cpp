@@ -100,6 +100,7 @@ namespace dx9
 
 	LPDIRECT3DDEVICE9 C_DX9_DEVICE::Init(HWND _hWnd, dk::DSIZE _sizeScreen, _E_DX9_DEVICE_MODE_ _eMode)
 	{
+		nLastDeviceStatus = _DX9_DEVICE_LOST;
 		eDeviceMode = _eMode;
 		hWnd = _hWnd;
 		rectRender.Set(&_sizeScreen);
@@ -185,21 +186,22 @@ namespace dx9
 				//pDirect3D9->GetAdapterDisplayModeEx(D3DADAPTER_DEFAULT, &displayModeEx, &displayRotation);
 
 				//DBGPRINT("C_DX9_DEVICE::CreateDevice(시작)");
-				if (FAILED(pDirect3D9->CreateDevice(D3DADAPTER_DEFAULT, d3dDevType, hWnd, dwBehaviorFlags, &d3dpp, &pDevice)))
+				HRESULT hrCreate = pDirect3D9->CreateDevice(D3DADAPTER_DEFAULT, d3dDevType, hWnd, dwBehaviorFlags, &d3dpp, &pDevice);
+				if (FAILED(hrCreate))
 				{
 					//DBGPRINT("C_DX9_DEVICE::CreateDevice(실패1)");
 					if (DIS_SET(dwBehaviorFlags, D3DCREATE_PUREDEVICE))
 					{
 						//DBGPRINT("C_DX9_DEVICE::CreateDevice(실패): D3DCREATE_PUREDEVICE 제거한 후 재시도");
 						DREMOVE_BIT(dwBehaviorFlags, D3DCREATE_PUREDEVICE);
-						pDirect3D9->CreateDevice(D3DADAPTER_DEFAULT, d3dDevType, hWnd, dwBehaviorFlags, &d3dpp, &pDevice);
+						hrCreate = pDirect3D9->CreateDevice(D3DADAPTER_DEFAULT, d3dDevType, hWnd, dwBehaviorFlags, &d3dpp, &pDevice);
 					}
-					if (pDevice)
-					{
-						DSAFE_RELEASE(pDirect3D9);
-						//DBGPRINT("C_DX9_DEVICE::CreateDevice(실패: %x)", pDevice);
-						break;
-					}
+				}
+				if (FAILED(hrCreate) || pDevice == nullptr)
+				{
+					DBGPRINT("[실패] C_DX9_DEVICE::CreateDevice(): 0x%08X", hrCreate);
+					DSAFE_RELEASE(pDevice);
+					break;
 				}
 				DBGPRINT("[결과] C_DX9_DEVICE::CreateDevice(): %x", pDevice);
 			}
@@ -235,7 +237,8 @@ namespace dx9
 
 			//Begin2D();
 		} while (false);
-		nLastDeviceStatus = _DX9_DEVICE_OK;		// 디바이스가 사용 가능 상태
+		if (pDevice != nullptr)
+			nLastDeviceStatus = _DX9_DEVICE_OK;		// 디바이스가 사용 가능 상태
 		DBGPRINT("[결과] C_DX9_DEVICE::Init() 모드: %s", (DX9_DEVICE_MODE_3D == eDeviceMode) ? "3D" : "2D");
 		return(pDevice);
 	}
@@ -1018,52 +1021,60 @@ namespace dx9
 		DSAFE_RELEASE(pStateBlock);
 
 		// 모든 텍스쳐 제거
-		for (std::list<_DX9_TEXTURE*>::const_iterator i = listDX9Textures.begin(); i != listDX9Textures.end(); ++i)
+		for (std::list<_DX9_TEXTURE*>::iterator i = listDX9Textures.begin(); i != listDX9Textures.end();)
 		{
 			_DX9_TEXTURE* pDX9Texture = *i;
 			if (nullptr == pDX9Texture->pTexture)			// 이미 제거 되었는가?
 			{
-				listDX9Textures.erase(i);					// 그렇다면 리스트에서 제거
+				i = listDX9Textures.erase(i);				// 그렇다면 리스트에서 제거
+				continue;
 			}
 			pDX9Texture->OnLostDevice();
+			++i;
 		}
 
 		// 모든 버텍스버퍼 해제
-		for (std::list<_DX9_VERTEX_BUFFER*>::const_iterator i = listDX9VertexBuffers.begin(); i != listDX9VertexBuffers.end(); ++i)
+		for (std::list<_DX9_VERTEX_BUFFER*>::iterator i = listDX9VertexBuffers.begin(); i != listDX9VertexBuffers.end();)
 		{
 			_DX9_VERTEX_BUFFER* pDX9VertexBuffer = *i;
 			if (nullptr == pDX9VertexBuffer->pVertexBuffer)		// 이미 제거 되었는가?
 			{
-				listDX9VertexBuffers.erase(i);					// 그렇다면 리스트에서 제거
+				i = listDX9VertexBuffers.erase(i);				// 그렇다면 리스트에서 제거
+				continue;
 			}
 			if (D3DPOOL_DEFAULT == pDX9VertexBuffer->d3dPool)	// D3DPOOL_DEFAULT 는 리셋시 디바이스가 해제되기 때문에 제거하자
 			{
 				DSAFE_RELEASE(pDX9VertexBuffer->pVertexBuffer);	// 해제하고 복구를 위해 리스트에는 그대로 놔둔다
 			}
+			++i;
 		}
 		// 모든 인덱스버퍼 해제
-		for (std::list<_DX9_INDEX_BUFFER*>::const_iterator i = listDX9IndexBuffers.begin(); i != listDX9IndexBuffers.end(); ++i)
+		for (std::list<_DX9_INDEX_BUFFER*>::iterator i = listDX9IndexBuffers.begin(); i != listDX9IndexBuffers.end();)
 		{
 			_DX9_INDEX_BUFFER* pDX9IndexBuffer = *i;
 			if (nullptr == pDX9IndexBuffer->pIndexBuffer)		// 이미 제거 되었는가?
 			{
-				listDX9IndexBuffers.erase(i);					// 그렇다면 리스트에서 제거
+				i = listDX9IndexBuffers.erase(i);				// 그렇다면 리스트에서 제거
+				continue;
 			}
 			if (D3DPOOL_DEFAULT == pDX9IndexBuffer->d3dPool)	// D3DPOOL_DEFAULT 는 리셋시 디바이스가 해제되기 때문에 제거하자
 			{
 				DSAFE_RELEASE(pDX9IndexBuffer->pIndexBuffer);	// 해제하고 복구를 위해 리스트에는 그대로 놔둔다
 			}
+			++i;
 		}
 
 		// 모든 폰트 제거
-		for (std::list<_DX9_FONT*>::const_iterator i = listDX9Fonts.begin(); i != listDX9Fonts.end(); ++i)
+		for (std::list<_DX9_FONT*>::iterator i = listDX9Fonts.begin(); i != listDX9Fonts.end();)
 		{
 			_DX9_FONT* pDX9Font = *i;
 			if (nullptr == pDX9Font->GetFont())			// 이미 제거 되었는가?
 			{
-				listDX9Fonts.erase(i);					// 그렇다면 리스트에서 제거
+				i = listDX9Fonts.erase(i);				// 그렇다면 리스트에서 제거
+				continue;
 			}
 			pDX9Font->OnLostDevice();
+			++i;
 		}
 
 		// 모든 셰이더 제거
@@ -1609,9 +1620,9 @@ namespace dx9
 			_DX9_PRESENT_PARAMETERS d3dpp(nullptr != _pSize ? _pSize->cx : 0, nullptr != _pSize ? _pSize->cy : 0);
 			InitPresentParameters(&d3dpp);
 			const HRESULT hr = pDevice->Reset(&d3dpp);
-			if (hr == D3DERR_INVALIDCALL)
+			if (FAILED(hr))
 			{
-				DBGPRINT(L"D3DERR_INVALIDCALL <-- 여기 오면 안됨");
+				DBGPRINT(L"C_DX9_DEVICE::ResetDevice 실패: 0x%08X", hr);
 			}
 			else
 			{

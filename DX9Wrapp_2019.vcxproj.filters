@@ -33,9 +33,6 @@
     <ClInclude Include="framework.h">
       <Filter>본체\헤더 파일</Filter>
     </ClInclude>
-    <ClInclude Include="stdafx.h">
-      <Filter>본체\헤더 파일</Filter>
-    </ClInclude>
     <ClInclude Include="DX9Device.h">
       <Filter>디바이스</Filter>
     </ClInclude>
@@ -89,9 +86,6 @@
     </ClInclude>
   </ItemGroup>
   <ItemGroup>
-    <ClCompile Include="stdafx.cpp">
-      <Filter>본체\소스 파일</Filter>
-    </ClCompile>
     <ClCompile Include="DX9Device.cpp">
       <Filter>디바이스</Filter>
     </ClCompile>

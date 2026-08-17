@@ -733,67 +733,43 @@ namespace dx9
 		}
 
 		_RENDER_STATE_BACKUP& backup = m_stRenderStateBackup;
+		backup.Clear();
 
-		//------------------------------------------------------------------------
-		// 렌더 스테이트 저장
-		//------------------------------------------------------------------------
-		m_pDevice->GetRenderState(D3DRS_ALPHABLENDENABLE, &backup.dwAlphaBlendEnable);
-		m_pDevice->GetRenderState(D3DRS_SRCBLEND, &backup.dwSrcBlend);
-		m_pDevice->GetRenderState(D3DRS_DESTBLEND, &backup.dwDestBlend);
-		m_pDevice->GetRenderState(D3DRS_ALPHATESTENABLE, &backup.dwAlphaTestEnable);
-		m_pDevice->GetRenderState(D3DRS_ALPHAREF, &backup.dwAlphaRef);
-		m_pDevice->GetRenderState(D3DRS_ALPHAFUNC, &backup.dwAlphaFunc);
-		m_pDevice->GetRenderState(D3DRS_CULLMODE, &backup.dwCullMode);
-		m_pDevice->GetRenderState(D3DRS_LIGHTING, &backup.dwLighting);
-		m_pDevice->GetRenderState(D3DRS_ZENABLE, &backup.dwZEnable);
-		m_pDevice->GetRenderState(D3DRS_ZWRITEENABLE, &backup.dwZWriteEnable);
-		m_pDevice->GetRenderState(D3DRS_FOGENABLE, &backup.dwFogEnable);
-		m_pDevice->GetRenderState(D3DRS_STENCILENABLE, &backup.dwStencilEnable);
+		HRESULT hr = m_pDevice->CreateStateBlock(D3DSBT_ALL, &backup.pStateBlock);
+		if (FAILED(hr))
+		{
+			DBGPRINT(L"[DX9SpriteEngine] SaveRenderStates: 상태 블록 생성 실패 (0x%08X)", hr);
+			return false;
+		}
 
-		//------------------------------------------------------------------------
-		// 텍스처 스테이지 상태 저장 (Stage 0)
-		//------------------------------------------------------------------------
-		m_pDevice->GetTextureStageState(0, D3DTSS_COLOROP, &backup.dwColorOp);
-		m_pDevice->GetTextureStageState(0, D3DTSS_COLORARG1, &backup.dwColorArg1);
-		m_pDevice->GetTextureStageState(0, D3DTSS_COLORARG2, &backup.dwColorArg2);
-		m_pDevice->GetTextureStageState(0, D3DTSS_ALPHAOP, &backup.dwAlphaOp);
-		m_pDevice->GetTextureStageState(0, D3DTSS_ALPHAARG1, &backup.dwAlphaArg1);
-		m_pDevice->GetTextureStageState(0, D3DTSS_ALPHAARG2, &backup.dwAlphaArg2);
+		D3DCAPS9 caps = {};
+		UINT nRenderTargetCount = 1;
+		if (SUCCEEDED(m_pDevice->GetDeviceCaps(&caps)) && caps.NumSimultaneousRTs > 0)
+			nRenderTargetCount = caps.NumSimultaneousRTs;
 
-		//------------------------------------------------------------------------
-		// 샘플러 상태 저장 (Stage 0)
-		//------------------------------------------------------------------------
-		m_pDevice->GetSamplerState(0, D3DSAMP_MAGFILTER, &backup.dwMagFilter);
-		m_pDevice->GetSamplerState(0, D3DSAMP_MINFILTER, &backup.dwMinFilter);
-		m_pDevice->GetSamplerState(0, D3DSAMP_MIPFILTER, &backup.dwMipFilter);
-		m_pDevice->GetSamplerState(0, D3DSAMP_ADDRESSU, &backup.dwAddressU);
-		m_pDevice->GetSamplerState(0, D3DSAMP_ADDRESSV, &backup.dwAddressV);
+		backup.vRenderTargets.resize(nRenderTargetCount, nullptr);
+		for (UINT i = 0; i < nRenderTargetCount; ++i)
+		{
+			hr = m_pDevice->GetRenderTarget(i, &backup.vRenderTargets[i]);
+			if ((i == 0 && (FAILED(hr) || backup.vRenderTargets[i] == nullptr)) ||
+				(i > 0 && FAILED(hr) && hr != D3DERR_NOTFOUND))
+			{
+				backup.Clear();
+				DBGPRINT(L"[DX9SpriteEngine] SaveRenderStates: 렌더 타겟 저장 실패 (0x%08X)", hr);
+				return false;
+			}
+		}
 
-		//------------------------------------------------------------------------
-		// 변환 행렬 저장
-		//------------------------------------------------------------------------
-		m_pDevice->GetTransform(D3DTS_WORLD, &backup.matWorld);
-		m_pDevice->GetTransform(D3DTS_VIEW, &backup.matView);
-		m_pDevice->GetTransform(D3DTS_PROJECTION, &backup.matProjection);
-
-		//------------------------------------------------------------------------
-		// 텍스처, 셰이더, FVF 저장
-		//------------------------------------------------------------------------
-		m_pDevice->GetTexture(0, reinterpret_cast<IDirect3DBaseTexture9**>(&backup.pTexture0));
-		m_pDevice->GetVertexShader(&backup.pVS);
-		m_pDevice->GetPixelShader(&backup.pPS);
-		m_pDevice->GetFVF(&backup.dwFVF);
-
-		//------------------------------------------------------------------------
-		// 버텍스/인덱스 버퍼 저장
-		//------------------------------------------------------------------------
-		m_pDevice->GetStreamSource(0, &backup.pVB, &backup.nVBOffset, &backup.nVBStride);
-		m_pDevice->GetIndices(&backup.pIB);
+		hr = m_pDevice->GetDepthStencilSurface(&backup.pDepthStencil);
+		if (FAILED(hr) && hr != D3DERR_NOTFOUND)
+		{
+			backup.Clear();
+			DBGPRINT(L"[DX9SpriteEngine] SaveRenderStates: 깊이/스텐실 저장 실패 (0x%08X)", hr);
+			return false;
+		}
 
 		backup.bValid = true;
-
-		DBGPRINT(L"[DX9SpriteEngine] SaveRenderStates 완료: AlphaBlend=%d, Src=%d, Dest=%d, FVF=0x%08X",
-			backup.dwAlphaBlendEnable, backup.dwSrcBlend, backup.dwDestBlend, backup.dwFVF);
+		DBGPRINT(L"[DX9SpriteEngine] SaveRenderStates 완료");
 
 		return true;
 	}
@@ -810,7 +786,7 @@ namespace dx9
 			return false;
 		}
 
-		const _RENDER_STATE_BACKUP& backup = m_stRenderStateBackup;
+		_RENDER_STATE_BACKUP& backup = m_stRenderStateBackup;
 
 		if (!backup.bValid)
 		{
@@ -818,82 +794,27 @@ namespace dx9
 			return false;
 		}
 
-		//------------------------------------------------------------------------
-		// 렌더 스테이트 복원
-		//------------------------------------------------------------------------
-		m_pDevice->SetRenderState(D3DRS_ALPHABLENDENABLE, backup.dwAlphaBlendEnable);
-		m_pDevice->SetRenderState(D3DRS_SRCBLEND, backup.dwSrcBlend);
-		m_pDevice->SetRenderState(D3DRS_DESTBLEND, backup.dwDestBlend);
-		m_pDevice->SetRenderState(D3DRS_ALPHATESTENABLE, backup.dwAlphaTestEnable);
-		m_pDevice->SetRenderState(D3DRS_ALPHAREF, backup.dwAlphaRef);
-		m_pDevice->SetRenderState(D3DRS_ALPHAFUNC, backup.dwAlphaFunc);
-		m_pDevice->SetRenderState(D3DRS_CULLMODE, backup.dwCullMode);
-		m_pDevice->SetRenderState(D3DRS_LIGHTING, backup.dwLighting);
-		m_pDevice->SetRenderState(D3DRS_ZENABLE, backup.dwZEnable);
-		m_pDevice->SetRenderState(D3DRS_ZWRITEENABLE, backup.dwZWriteEnable);
-		m_pDevice->SetRenderState(D3DRS_FOGENABLE, backup.dwFogEnable);
-		m_pDevice->SetRenderState(D3DRS_STENCILENABLE, backup.dwStencilEnable);
+		bool bRestored = true;
+		if (FAILED(m_pDevice->SetDepthStencilSurface(nullptr)))
+			bRestored = false;
+		for (UINT i = 1; i < static_cast<UINT>(backup.vRenderTargets.size()); ++i)
+		{
+			if (FAILED(m_pDevice->SetRenderTarget(i, nullptr)))
+				bRestored = false;
+		}
+		for (UINT i = 0; i < static_cast<UINT>(backup.vRenderTargets.size()); ++i)
+		{
+			if (FAILED(m_pDevice->SetRenderTarget(i, backup.vRenderTargets[i])))
+				bRestored = false;
+		}
+		if (FAILED(m_pDevice->SetDepthStencilSurface(backup.pDepthStencil)))
+			bRestored = false;
+		if (FAILED(backup.pStateBlock->Apply()))
+			bRestored = false;
 
-		//------------------------------------------------------------------------
-		// 텍스처 스테이지 상태 복원 (Stage 0)
-		//------------------------------------------------------------------------
-		m_pDevice->SetTextureStageState(0, D3DTSS_COLOROP, backup.dwColorOp);
-		m_pDevice->SetTextureStageState(0, D3DTSS_COLORARG1, backup.dwColorArg1);
-		m_pDevice->SetTextureStageState(0, D3DTSS_COLORARG2, backup.dwColorArg2);
-		m_pDevice->SetTextureStageState(0, D3DTSS_ALPHAOP, backup.dwAlphaOp);
-		m_pDevice->SetTextureStageState(0, D3DTSS_ALPHAARG1, backup.dwAlphaArg1);
-		m_pDevice->SetTextureStageState(0, D3DTSS_ALPHAARG2, backup.dwAlphaArg2);
-
-		//------------------------------------------------------------------------
-		// 샘플러 상태 복원 (Stage 0)
-		//------------------------------------------------------------------------
-		m_pDevice->SetSamplerState(0, D3DSAMP_MAGFILTER, backup.dwMagFilter);
-		m_pDevice->SetSamplerState(0, D3DSAMP_MINFILTER, backup.dwMinFilter);
-		m_pDevice->SetSamplerState(0, D3DSAMP_MIPFILTER, backup.dwMipFilter);
-		m_pDevice->SetSamplerState(0, D3DSAMP_ADDRESSU, backup.dwAddressU);
-		m_pDevice->SetSamplerState(0, D3DSAMP_ADDRESSV, backup.dwAddressV);
-
-		//------------------------------------------------------------------------
-		// 변환 행렬 복원
-		//------------------------------------------------------------------------
-		m_pDevice->SetTransform(D3DTS_WORLD, &backup.matWorld);
-		m_pDevice->SetTransform(D3DTS_VIEW, &backup.matView);
-		m_pDevice->SetTransform(D3DTS_PROJECTION, &backup.matProjection);
-
-		//------------------------------------------------------------------------
-		// 텍스처, 셰이더, FVF 복원
-		//------------------------------------------------------------------------
-		m_pDevice->SetTexture(0, backup.pTexture0);
-		m_pDevice->SetVertexShader(backup.pVS);
-		m_pDevice->SetPixelShader(backup.pPS);
-		m_pDevice->SetFVF(backup.dwFVF);
-
-		//------------------------------------------------------------------------
-		// 버텍스/인덱스 버퍼 복원
-		//------------------------------------------------------------------------
-		m_pDevice->SetStreamSource(0, backup.pVB, backup.nVBOffset, backup.nVBStride);
-		m_pDevice->SetIndices(backup.pIB);
-
-		//------------------------------------------------------------------------
-		// COM 참조 해제 (GetXXX에서 AddRef된 것들)
-		//------------------------------------------------------------------------
-		if (backup.pTexture0 != nullptr)
-			backup.pTexture0->Release();
-		if (backup.pVS != nullptr)
-			backup.pVS->Release();
-		if (backup.pPS != nullptr)
-			backup.pPS->Release();
-		if (backup.pVB != nullptr)
-			backup.pVB->Release();
-		if (backup.pIB != nullptr)
-			backup.pIB->Release();
-
-		DBGPRINT(L"[DX9SpriteEngine] RestoreRenderStates 완료");
-
-		// 백업 무효화 (한 번만 복원 가능)
-		m_stRenderStateBackup.bValid = false;
-
-		return true;
+		backup.Clear();
+		DBGPRINT(L"[DX9SpriteEngine] RestoreRenderStates %s", bRestored ? L"완료" : L"실패");
+		return bRestored;
 	}
 
 } // namespace dx9
